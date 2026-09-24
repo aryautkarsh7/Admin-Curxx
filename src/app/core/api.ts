@@ -17,6 +17,9 @@ export type Meta = {
   articleCategories: string[];
   surgeries: { slug: string; name: string; category: string; specialty: string; cost: [number, number] }[];
   conditions: { slug: string; name: string; specialty: string }[];
+  surgeryCategories: string[];
+  contentPages: string[];
+  settingGroups: string[];
 };
 
 export type Stats = {

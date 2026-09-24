@@ -187,7 +187,7 @@ export class ResourceListPage {
 
   protected async remove(doc: Doc) {
     const r = this.resource()!;
-    const name = doc['name'] ?? doc['title'] ?? doc['reference'] ?? this.keyOf(doc);
+    const name = doc['name'] ?? doc['title'] ?? doc['label'] ?? doc['reference'] ?? this.keyOf(doc);
     if (!confirm(`Delete ${r.singular} "${name}"? This removes it from the website.`)) return;
     try {
       await this.api.remove(r.name, this.keyOf(doc));

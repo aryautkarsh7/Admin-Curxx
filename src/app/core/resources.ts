@@ -3,7 +3,7 @@ import type { Doc, Meta } from './api';
 /** Where a select's options come from: a fixed list, or the /admin/meta payload. */
 export type OptionSource =
   | { static: (string | { value: string; label: string })[] }
-  | { meta: 'cities' | 'specialties' | 'facilities' | 'facilityTypes' | 'labCategories' | 'medicineCategories' | 'specialtyCategories' | 'articleCategories' | 'conditions' };
+  | { meta: 'cities' | 'specialties' | 'facilities' | 'facilityTypes' | 'labCategories' | 'medicineCategories' | 'specialtyCategories' | 'articleCategories' | 'conditions' | 'surgeryCategories' | 'contentPages' | 'settingGroups' };
 
 export type FieldType =
   | 'text' // single line
@@ -182,6 +182,7 @@ export const RESOURCES: Resource[] = [
           { key: 'tagline', label: 'Tagline', type: 'text' },
           { key: 'about', label: 'About', type: 'textarea', wide: true },
           { key: 'photoUrl', label: 'Photo URL', type: 'url', wide: true },
+          { key: 'gallery', label: 'More photos (one URL per line)', type: 'list', wide: true, hint: 'Shown beside the main photo on the profile. Empty = the default clinic interior photo (Site settings).' },
         ],
       },
       {
@@ -234,6 +235,7 @@ export const RESOURCES: Resource[] = [
       { key: 'fromPrice', label: 'From', format: 'money' },
       { key: 'popular', label: 'Popular', format: 'bool' },
       { key: 'video', label: 'Video', format: 'bool' },
+      { key: 'homeOrder', label: 'Homepage' },
     ],
     filters: [{ key: 'category', label: 'Category', options: { meta: 'specialtyCategories' } }],
     sections: [
@@ -249,6 +251,8 @@ export const RESOURCES: Resource[] = [
           { key: 'videoFrom', label: 'Video fee from (₹)', type: 'number' },
           { key: 'video', label: 'Offers video consults', type: 'boolean' },
           { key: 'popular', label: 'Popular', type: 'boolean' },
+          { key: 'homeOrder', label: 'Homepage tile position', type: 'number', hint: '1–12 shows it among the 12 homepage specialty tiles, in that order. 0 = not on the homepage.' },
+          { key: 'order', label: 'Order in its category', type: 'number' },
           { key: 'description', label: 'Description', type: 'textarea', wide: true },
           { key: 'conditions', label: 'Conditions treated', type: 'list', wide: true },
           { key: 'whenToSee', label: 'When to see one', type: 'list', wide: true },
@@ -742,6 +746,317 @@ export const RESOURCES: Resource[] = [
       },
     ],
   },
+  // ---------------------------------------------------------------- Website content
+  {
+    name: 'site-settings',
+    label: 'Site settings',
+    singular: 'setting',
+    icon: 'tune',
+    group: 'Website',
+    key: 'slug',
+    canCreate: true,
+    canDelete: true,
+    description:
+      'Single values used across the website: marketing claims, app links and images. Kind “Claim — must be true” marks statements that can’t be checked against our data (e.g. 1.2M+ consultations) — confirm each is true before it goes live. Counts that we can compute (doctors, clinics, ratings, tests) are live and have no setting. Deleting a built-in setting restores its original value on the next deploy.',
+    defaults: { group: 'General', kind: 'text' },
+    columns: [
+      { key: 'label', label: 'Setting' },
+      { key: 'value', label: 'Value' },
+      { key: 'kind', label: 'Kind', format: 'badge' },
+      { key: 'group', label: 'Group' },
+    ],
+    filters: [
+      { key: 'group', label: 'Group', options: { meta: 'settingGroups' } },
+      { key: 'kind', label: 'Kind', options: { static: [{ value: 'claim', label: 'Claim — must be true' }, 'text', 'number', 'url', 'image'] } },
+    ],
+    sections: [
+      {
+        title: 'Setting',
+        fields: [
+          { key: 'label', label: 'Name', type: 'text', required: true },
+          { key: 'slug', label: 'Key', type: 'text', createOnly: true, hint: 'The website reads settings by this key, e.g. claim-patients. It can’t change later.' },
+          { key: 'kind', label: 'Kind', type: 'select', options: { static: [{ value: 'claim', label: 'Claim — must be true' }, { value: 'text', label: 'Text' }, { value: 'number', label: 'Number' }, { value: 'url', label: 'Link' }, { value: 'image', label: 'Image URL' }] } },
+          { key: 'group', label: 'Group', type: 'lookup', options: { meta: 'settingGroups' } },
+          { key: 'value', label: 'Value', type: 'textarea', wide: true, hint: 'Claims must be true. Images: a full https:// URL, or a path on the website such as /images/home-hero.jpg.' },
+          { key: 'note', label: 'Where it shows', type: 'textarea', wide: true },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'content',
+    label: 'Page content',
+    singular: 'page section',
+    icon: 'article',
+    group: 'Website',
+    key: 'slug',
+    canCreate: true,
+    canDelete: true,
+    description:
+      'Editable sections of website pages: FAQs, feature bands, service cards, partner programmes, trust badges, lab and pharmacy shortcuts, and legal pages. Headings levels are fixed by the page design (for SEO); edit the words here. In copy, {labTests}, {cities} and {accreditedFacilities} are filled in with live counts, and {city} in a link is the visitor’s city. Deleting a built-in section restores its original copy on the next deploy.',
+    sitePath: (d) => (['home', 'shared'].includes(d['page']) ? '/' : d['page'] === 'catalogue' ? '/bangalore/surgeries' : `/${d['page']}`),
+    defaults: { published: true, order: 50, items: [] },
+    columns: [
+      { key: 'label', label: 'Section' },
+      { key: 'page', label: 'Page', format: 'badge' },
+      { key: 'section', label: 'Key' },
+      { key: 'published', label: 'Published', format: 'bool' },
+      { key: 'updatedAt', label: 'Updated', format: 'date' },
+    ],
+    filters: [
+      { key: 'page', label: 'Page', options: { meta: 'contentPages' } },
+      { key: 'published', label: 'Published', options: YES_NO },
+    ],
+    sections: [
+      {
+        title: 'Section',
+        fields: [
+          { key: 'label', label: 'Name', type: 'text', required: true },
+          { key: 'slug', label: 'Key', type: 'text', createOnly: true },
+          { key: 'page', label: 'Page', type: 'lookup', required: true, options: { meta: 'contentPages' }, hint: 'home, shared (homepage + Partner With Us), curxx-plus, for-providers, lab-tests, medicines, privacy, terms, teleconsultation-policy' },
+          { key: 'section', label: 'Section key', type: 'text', required: true, hint: 'The page reads this section by page + key; only change it for new sections.' },
+          { key: 'title', label: 'Heading', type: 'text', wide: true },
+          { key: 'intro', label: 'Intro', type: 'textarea', wide: true },
+          { key: 'published', label: 'Published', type: 'boolean' },
+          { key: 'order', label: 'Order', type: 'number' },
+          {
+            key: 'items',
+            label: 'Entries',
+            type: 'json',
+            wide: true,
+            hint: 'Keep the shape of the existing entries. FAQs: {"question","answer"} · bands: {"id","eyebrow","heading","body","icon","cta":{"label","href"},"points":[]} · service cards: {"eyebrow","title","body","icon","cta","href"} · steps: {"title","body","footnote"} · legal: {"heading","body"} · badges and searches: plain strings.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'testimonials',
+    label: 'Testimonials',
+    singular: 'testimonial',
+    icon: 'format_quote',
+    group: 'Website',
+    key: 'slug',
+    canCreate: true,
+    canDelete: true,
+    description: 'Patient stories on the homepage and doctor stories on For Providers. Publish only real, consented quotes.',
+    sitePath: (d) => (d['audience'] === 'provider' ? '/for-providers#testimonials' : '/'),
+    defaults: { audience: 'patient', rating: 5, published: true, order: 50 },
+    columns: [
+      { key: 'name', label: 'Name' },
+      { key: 'audience', label: 'Shown to', format: 'badge' },
+      { key: 'location', label: 'Line under name' },
+      { key: 'rating', label: 'Rating', format: 'stars' },
+      { key: 'published', label: 'Published', format: 'bool' },
+      { key: 'order', label: 'Order' },
+    ],
+    filters: [
+      { key: 'audience', label: 'Shown to', options: { static: [{ value: 'patient', label: 'Patients (homepage)' }, { value: 'provider', label: 'Doctors (For Providers)' }] } },
+      { key: 'published', label: 'Published', options: YES_NO },
+    ],
+    sections: [
+      {
+        title: 'Testimonial',
+        fields: [
+          { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Priya Sharma' },
+          { key: 'slug', label: 'Key', type: 'text', createOnly: true, hint: 'Leave blank to generate from the name.' },
+          { key: 'audience', label: 'Shown to', type: 'select', options: { static: [{ value: 'patient', label: 'Patients (homepage)' }, { value: 'provider', label: 'Doctors (For Providers)' }] } },
+          { key: 'initials', label: 'Initials', type: 'text', hint: 'Leave blank to use the name’s initials.' },
+          { key: 'location', label: 'Line under the name', type: 'text', placeholder: 'Bengaluru, Karnataka · or · MD Dermatology • Bengaluru' },
+          { key: 'city', label: 'City', type: 'select', options: CITY },
+          { key: 'rating', label: 'Stars', type: 'select', options: { static: ['5', '4', '3'] } },
+          { key: 'doctorSlug', label: 'Doctor (slug, optional)', type: 'text' },
+          { key: 'badge.label', label: 'Result chip (doctors)', type: 'text', placeholder: '3.4x Booking Growth' },
+          { key: 'badge.icon', label: 'Result chip icon', type: 'text', placeholder: 'trending_up' },
+          { key: 'order', label: 'Order', type: 'number' },
+          { key: 'published', label: 'Published', type: 'boolean' },
+          { key: 'text', label: 'Quote', type: 'textarea', required: true, wide: true },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'plans',
+    label: 'Plans & pricing',
+    singular: 'plan',
+    icon: 'workspace_premium',
+    group: 'Website',
+    key: 'slug',
+    canCreate: true,
+    canDelete: true,
+    description: 'Curxx Plus plans (for patients) and the software plans on For Providers. Prices show on the website straight away.',
+    sitePath: (d) => (d['audience'] === 'provider' ? '/for-providers#pricing' : '/curxx-plus#plans'),
+    defaults: { audience: 'plus', period: 'year', published: true, highlight: false, order: 50, perks: [], excluded: [] },
+    columns: [
+      { key: 'name', label: 'Plan' },
+      { key: 'audience', label: 'Page', format: 'badge' },
+      { key: 'price', label: 'Price', format: 'money' },
+      { key: 'period', label: 'Per' },
+      { key: 'highlight', label: 'Highlighted', format: 'bool' },
+      { key: 'published', label: 'Published', format: 'bool' },
+    ],
+    filters: [
+      { key: 'audience', label: 'Page', options: { static: [{ value: 'plus', label: 'Curxx Plus' }, { value: 'provider', label: 'For Providers' }] } },
+      { key: 'published', label: 'Published', options: YES_NO },
+    ],
+    sections: [
+      {
+        title: 'Plan',
+        fields: [
+          { key: 'name', label: 'Name', type: 'text', required: true },
+          { key: 'slug', label: 'Key', type: 'text', createOnly: true },
+          { key: 'audience', label: 'Page', type: 'select', options: { static: [{ value: 'plus', label: 'Curxx Plus' }, { value: 'provider', label: 'For Providers' }] } },
+          { key: 'price', label: 'Price (₹)', type: 'number', required: true },
+          { key: 'period', label: 'Per', type: 'select', options: { static: ['year', 'month', 'forever'] } },
+          { key: 'members', label: 'Members line', type: 'text', placeholder: 'Up to 4 members' },
+          { key: 'tagline', label: 'Tagline', type: 'text', wide: true },
+          { key: 'highlight', label: 'Highlight this plan', type: 'boolean' },
+          { key: 'badge', label: 'Badge', type: 'text', placeholder: 'Most popular' },
+          { key: 'ctaLabel', label: 'Button label', type: 'text' },
+          { key: 'order', label: 'Order', type: 'number' },
+          { key: 'published', label: 'Published', type: 'boolean' },
+          { key: 'perks', label: 'Included (one per line)', type: 'list', wide: true, hint: 'Wrap words in **double stars** to show them in bold.' },
+          { key: 'excluded', label: 'Not included (one per line)', type: 'list', wide: true },
+        ],
+      },
+    ],
+  },
+
+  // ---------------------------------------------------------------- Catalogue & URLs
+  {
+    name: 'cities',
+    label: 'Cities & localities',
+    singular: 'city',
+    icon: 'location_city',
+    group: 'Catalogue & URLs',
+    key: 'slug',
+    canCreate: true,
+    canDelete: true,
+    description:
+      'Cities we serve, with their localities. Each city gets /<city>/doctors, specialty, locality, clinic, lab and surgery pages; a new one works on the website within about 5 minutes. The slug and locality slugs are public URLs — they can’t change once live.',
+    sitePath: (d) => `/${d['slug']}/doctors`,
+    defaults: { tier: 2, popularOrder: 0, order: 100, aliases: [], pincodePrefixes: [], localities: [] },
+    columns: [
+      { key: 'name', label: 'City' },
+      { key: 'state', label: 'State' },
+      { key: 'tier', label: 'Tier' },
+      { key: 'popularOrder', label: 'Popular #' },
+      { key: 'managed', label: 'Admin-edited', format: 'bool' },
+    ],
+    filters: [{ key: 'tier', label: 'Tier', options: { static: ['1', '2'] } }],
+    sections: [
+      {
+        title: 'City',
+        fields: [
+          { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Bengaluru' },
+          { key: 'slug', label: 'URL slug', type: 'text', createOnly: true, hint: 'Becomes /<slug>/doctors. Leave blank to generate from the name.' },
+          { key: 'state', label: 'State', type: 'text', required: true },
+          { key: 'council', label: 'State medical council', type: 'text', placeholder: 'KMC' },
+          { key: 'tier', label: 'Tier', type: 'select', options: { static: [{ value: '1', label: 'Tier 1 (metro)' }, { value: '2', label: 'Tier 2 — surgery costs shown ~15% lower' }] } },
+          { key: 'popularOrder', label: 'Popular city position', type: 'number', hint: '1, 2, 3… lists it first in the city picker and footer. 0 = alphabetical after them.' },
+          { key: 'lat', label: 'Latitude (centre)', type: 'number', required: true },
+          { key: 'lng', label: 'Longitude (centre)', type: 'number', required: true },
+          { key: 'aliases', label: 'Other spellings (redirect here)', type: 'tags', placeholder: 'bengaluru, blr' },
+          { key: 'pincodePrefixes', label: 'Pincode prefixes', type: 'tags', placeholder: '560, 561' },
+          { key: 'order', label: 'Order', type: 'number' },
+          { key: 'localities', label: 'Localities', type: 'json', wide: true, hint: '[{"name":"Indiranagar","pincode":"560038","lat":12.97,"lng":77.64}] — slugs are made from names; keep existing ones unchanged.' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'conditions',
+    label: 'Conditions',
+    singular: 'condition',
+    icon: 'symptoms',
+    group: 'Catalogue & URLs',
+    key: 'slug',
+    canCreate: true,
+    canDelete: true,
+    description: 'Conditions with their own treatment page in every city (/<city>/treatment-for-<slug>) and search suggestions. A chip label + position puts one in the homepage “Popular Consultations”.',
+    sitePath: (d) => `/bangalore/treatment-for-${d['slug']}`,
+    defaults: { popularOrder: 0, order: 100 },
+    columns: [
+      { key: 'name', label: 'Condition' },
+      { key: 'specialty', label: 'Specialty', format: 'badge' },
+      { key: 'popular', label: 'Homepage chip' },
+      { key: 'popularOrder', label: 'Chip #' },
+      { key: 'managed', label: 'Admin-edited', format: 'bool' },
+    ],
+    filters: [{ key: 'specialty', label: 'Specialty', options: { meta: 'specialties' } }],
+    sections: [
+      {
+        title: 'Condition',
+        fields: [
+          { key: 'name', label: 'Name', type: 'text', required: true },
+          { key: 'slug', label: 'URL slug', type: 'text', createOnly: true, hint: 'Becomes /<city>/treatment-for-<slug>. Can’t change later.' },
+          { key: 'specialty', label: 'Treated by', type: 'select', required: true, options: { meta: 'specialties' } },
+          { key: 'focus', label: 'Focus area slug', type: 'text', hint: 'One of the specialty’s focus areas, e.g. acne-scars' },
+          { key: 'popular', label: 'Homepage chip label', type: 'text', placeholder: 'Skin Acne' },
+          { key: 'popularOrder', label: 'Chip position', type: 'number', hint: '1, 2, 3… shows it as a homepage chip. 0 = not shown.' },
+          { key: 'order', label: 'Order', type: 'number' },
+          { key: 'summary', label: 'Summary', type: 'textarea', wide: true },
+          { key: 'symptoms', label: 'Symptoms', type: 'list', wide: true },
+          { key: 'causes', label: 'Causes', type: 'list', wide: true },
+          { key: 'treatments', label: 'Treatments', type: 'list', wide: true },
+          { key: 'selfCare', label: 'Self-care', type: 'list', wide: true },
+          { key: 'whenToSee', label: 'When to see a doctor', type: 'list', wide: true },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'surgeries',
+    label: 'Surgeries',
+    singular: 'surgery',
+    icon: 'healing',
+    group: 'Catalogue & URLs',
+    key: 'slug',
+    canCreate: true,
+    canDelete: true,
+    description: 'Planned surgeries with a page in every city (/<city>/surgery/<slug>): cost range (tier-1 city; tier-2 shown ~15% lower), stay, recovery and the hospitals that do them.',
+    sitePath: (d) => `/bangalore/surgery/${d['slug']}`,
+    defaults: { icon: 'healing', popular: false, insurance: true, order: 100, durationMinutes: [30, 60], cost: [30000, 60000] },
+    columns: [
+      { key: 'name', label: 'Surgery' },
+      { key: 'category', label: 'Category', format: 'badge' },
+      { key: 'specialty', label: 'Specialty' },
+      { key: 'popular', label: 'Popular', format: 'bool' },
+      { key: 'managed', label: 'Admin-edited', format: 'bool' },
+    ],
+    filters: [
+      { key: 'category', label: 'Category', options: { meta: 'surgeryCategories' } },
+      { key: 'specialty', label: 'Specialty', options: { meta: 'specialties' } },
+      { key: 'popular', label: 'Popular', options: YES_NO },
+    ],
+    sections: [
+      {
+        title: 'Surgery',
+        fields: [
+          { key: 'name', label: 'Name', type: 'text', required: true },
+          { key: 'slug', label: 'URL slug', type: 'text', createOnly: true, hint: 'Becomes /<city>/surgery/<slug>. Can’t change later.' },
+          { key: 'category', label: 'Category', type: 'lookup', required: true, options: { meta: 'surgeryCategories' }, hint: 'Pick one, or type a new category (order categories in Page content → catalogue).' },
+          { key: 'specialty', label: 'Surgeon specialty', type: 'select', required: true, options: { meta: 'specialties' } },
+          { key: 'icon', label: 'Icon', type: 'text' },
+          { key: 'popular', label: 'Popular', type: 'boolean' },
+          { key: 'insurance', label: 'Usually covered by insurance', type: 'boolean' },
+          { key: 'order', label: 'Order', type: 'number' },
+          { key: 'cost', label: 'Cost range, tier-1 city (₹)', type: 'json', hint: '[35000, 75000]' },
+          { key: 'durationMinutes', label: 'Procedure time (minutes)', type: 'json', hint: '[20, 40]' },
+          { key: 'stay', label: 'Hospital stay', type: 'text', placeholder: 'Day care' },
+          { key: 'recovery', label: 'Recovery', type: 'text' },
+          { key: 'anaesthesia', label: 'Anaesthesia', type: 'text', wide: true },
+          { key: 'description', label: 'Description', type: 'textarea', wide: true },
+          { key: 'treats', label: 'Treats', type: 'list', wide: true },
+          { key: 'techniques', label: 'Techniques', type: 'list', wide: true },
+          { key: 'steps', label: 'Steps', type: 'list', wide: true },
+          { key: 'benefits', label: 'Benefits', type: 'list', wide: true },
+          { key: 'risks', label: 'Risks', type: 'list', wide: true },
+          { key: 'departments', label: 'Hospital departments that do it', type: 'tags', wide: true },
+        ],
+      },
+    ],
+  },
 ];
 
 export const RESOURCE_BY_NAME = new Map(RESOURCES.map((r) => [r.name, r]));
@@ -771,6 +1086,12 @@ export function optionsFor(source: OptionSource | undefined, meta: Meta | null):
       return meta.articleCategories.map((c) => ({ value: c, label: c }));
     case 'conditions':
       return meta.conditions.map((c) => ({ value: c.slug, label: c.name }));
+    case 'surgeryCategories':
+      return meta.surgeryCategories.map((c) => ({ value: c, label: c }));
+    case 'contentPages':
+      return meta.contentPages.map((c) => ({ value: c, label: c }));
+    case 'settingGroups':
+      return meta.settingGroups.map((c) => ({ value: c, label: c }));
   }
 }
 

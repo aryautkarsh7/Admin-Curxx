@@ -60,7 +60,7 @@ const EMPTY_SCHEDULE: Schedule = { days: [1, 2, 3, 4, 5, 6], sessions: [{ start:
                           <label class="switch"><input [id]="f.key" type="checkbox" [attr.disabled]="f.readonly ? '' : null" [ngModel]="!!read(f)" (ngModelChange)="write(f, $event)" [name]="f.key" /><span>{{ read(f) ? 'Yes' : 'No' }}</span></label>
                         }
                         @case ('select') {
-                          <select [id]="f.key" [attr.disabled]="f.readonly ? '' : null" [ngModel]="read(f) ?? ''" (ngModelChange)="write(f, $event)" [name]="f.key">
+                          <select [id]="f.key" [attr.disabled]="f.readonly ? '' : null" [ngModel]="selectValue(f)" (ngModelChange)="write(f, $event)" [name]="f.key">
                             <option value="">—</option>
                             @for (o of options(f.options); track o.value) {
                               <option [value]="o.value">{{ o.label }}</option>
@@ -205,7 +205,7 @@ export class ResourceFormPage {
 
   protected title() {
     const d = this.doc();
-    return d['name'] ?? d['title'] ?? d['reference'] ?? d['phone'] ?? this.resource()?.singular ?? '';
+    return d['name'] ?? d['title'] ?? d['label'] ?? d['reference'] ?? d['phone'] ?? this.resource()?.singular ?? '';
   }
 
   private async load() {
@@ -250,6 +250,12 @@ export class ResourceFormPage {
     const next = structuredClone(this.doc());
     setPath(next, f.key, f.type === 'number' ? (value === '' || value === null ? undefined : Number(value)) : value);
     this.doc.set(next);
+  }
+
+  /** Options are strings; a stored number (tier 2, 5 stars) still shows as selected. */
+  protected selectValue(f: Field) {
+    const v = this.read(f);
+    return v === undefined || v === null ? '' : String(v);
   }
 
   protected options(source: OptionSource | undefined) {

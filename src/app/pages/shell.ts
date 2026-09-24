@@ -21,8 +21,6 @@ import { GROUPS, RESOURCES } from '../core/resources';
               <a [routerLink]="['/', r.name]" routerLinkActive="active" (click)="navOpen.set(false)"><span class="icon">{{ r.icon }}</span>{{ r.label }}</a>
             }
           }
-          <p class="nav-group">Reference</p>
-          <a routerLink="/reference" routerLinkActive="active" (click)="navOpen.set(false)"><span class="icon">healing</span>Surgeries & conditions</a>
         </nav>
         <div class="sidebar-foot">
           <a class="muted small" [href]="siteUrl" target="_blank" rel="noopener">Open website ↗</a>
