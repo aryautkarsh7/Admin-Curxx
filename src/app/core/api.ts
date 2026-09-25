@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export type Doc = Record<string, any>;
+export type RankedType = 'doctors' | 'facilities' | 'labs';
 export type Page<T = Doc> = { items: T[]; total: number; page: number; limit: number; pages: number };
 
 export type Meta = {
@@ -25,6 +26,12 @@ export type Meta = {
 export type Stats = {
   counts: Record<string, number>;
   appointmentsToday: number;
+  appointmentsTodayByMode: { clinic: number; video: number; audio: number };
+  callsToday: number;
+  whatsappToday: number;
+  loginsToday: number;
+  activeUsers7d: number;
+  newReports: number;
   newLeads: number;
   adminDoctors: number;
   ordersByStatus: Record<string, number>;
@@ -82,6 +89,21 @@ export class Api {
 
   update(resource: string, key: string, body: Doc) {
     return firstValueFrom(this.http.patch<{ item: Doc }>(`${this.base}/${resource}/${encodeURIComponent(key)}`, body)).then((r) => r.item);
+  }
+
+  /** Ranking board for doctors (city + specialty), hospitals/clinics or labs (city). */
+  rankings(query: { type: RankedType; city: string; specialty?: string; category?: string; q?: string }) {
+    let params = new HttpParams();
+    for (const [k, v] of Object.entries(query)) if (v) params = params.set(k, v);
+    return firstValueFrom(this.http.get<{ items: Doc[]; total: number }>(`${this.base}/rankings`, { params }));
+  }
+
+  saveRankings(type: RankedType, ranks: { slug: string; rank: number }[]) {
+    return firstValueFrom(this.http.post<{ updated: number }>(`${this.base}/rankings`, { type, ranks }));
+  }
+
+  userActivity(id: string) {
+    return firstValueFrom(this.http.get<{ logins: Doc[]; appointments: Doc[]; orders: Doc[]; interactions: Doc[] }>(`${this.base}/users/${encodeURIComponent(id)}/activity`));
   }
 
   remove(resource: string, key: string) {

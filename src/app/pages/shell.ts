@@ -15,6 +15,7 @@ import { GROUPS, RESOURCES } from '../core/resources';
           <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="navOpen.set(false)">
             <span class="icon">dashboard</span>Dashboard
           </a>
+          <a routerLink="/rankings" routerLinkActive="active" (click)="navOpen.set(false)"><span class="icon">leaderboard</span>Rankings</a>
           @for (group of groups; track group) {
             <p class="nav-group">{{ group }}</p>
             @for (r of resourcesIn(group); track r.name) {

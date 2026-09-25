@@ -105,6 +105,27 @@ code { background: var(--bg); border: 1px solid var(--line); border-radius: 4px;
 .tile.accent { background: var(--red-soft); border-color: var(--red-line); }
 .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
 
+/* Mode / kind badges */
+.badge[data-v='video'] { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.badge[data-v='audio'], .badge[data-v='call'] { background: #f5f3ff; border-color: #ddd6fe; color: #6d28d9; }
+.badge[data-v='clinic'] { background: var(--amber-soft); border-color: #fed7aa; color: var(--amber); }
+.badge[data-v='whatsapp'], .badge[data-v='fixed'] { background: var(--green-soft); border-color: #a7f3d0; color: var(--green); }
+.badge[data-v='reviewing'] { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.badge[data-v='rejected'] { background: var(--bg); color: var(--muted); }
+
+/* Tabs */
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; border-bottom: 1px solid var(--line); }
+.tab { font: inherit; font-weight: 600; color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 12px; margin-bottom: -1px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.tab:hover { color: var(--ink); }
+.tab.active { color: var(--red); border-bottom-color: var(--red); }
+.tab .count { font-size: 11px; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; color: var(--muted); }
+
+/* Rankings */
+.rank-input { width: 64px !important; text-align: center; }
+.rank-row.ranked td { background: #fffbfb; }
+.rank-pos { font-weight: 700; color: var(--red); width: 36px; }
+.sticky-bar { position: sticky; bottom: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--bg); padding: 12px 0; border-top: 1px solid var(--line); margin-top: 12px; }
+
 /* List toolbar */
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
 .search { display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 0 10px; flex: 1 1 260px; }
@@ -137,6 +158,12 @@ legend { font-weight: 700; font-size: 15px; padding: 0 6px; }
 .schedule .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .schedule .row input[type='time'] { width: auto; }
 .schedule label.small { display: inline-flex; align-items: center; gap: 6px; }
+.day-row { display: grid; grid-template-columns: 130px 1fr; gap: 10px; align-items: start; padding: 8px 0; border-top: 1px solid var(--line); }
+.day-row.off { opacity: 0.75; }
+.day-row .chip { justify-content: flex-start; }
+.day-sessions { display: grid; gap: 6px; align-content: start; min-height: 32px; }
+.day-sessions .muted { line-height: 32px; }
+@media (max-width: 640px) { .day-row { grid-template-columns: 1fr; } }
 .form-actions { display: flex; justify-content: flex-end; gap: 8px; position: sticky; bottom: 0; background: var(--bg); padding: 12px 0; border-top: 1px solid var(--line); }
 @media (max-width: 700px) {
   .form-grid { grid-template-columns: 1fr; }
@@ -150,3 +177,11 @@ legend { font-weight: 700; font-size: 15px; padding: 0 6px; }
 .login-card p { margin: 0; }
 .login .field span { font-weight: 600; font-size: 13px; }
 .login .field input { width: 100%; height: 42px; }
+
+.section-title { margin: 24px 0 12px; font-size: 18px; }
+.create-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.create-bar h2 { margin: 0 0 2px; }
+.create-bar .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.compact-tabs { margin: 4px 0 4px; }
+.compact-tabs .tab { padding: 6px 8px; font-size: 13px; }
+.ok-text { color: var(--green); }

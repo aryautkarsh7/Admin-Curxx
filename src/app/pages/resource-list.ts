@@ -7,7 +7,7 @@ import { combineLatest } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Api, Doc, Meta, Page, errorText } from '../core/api';
 import { cell } from '../core/format';
-import { Column, RESOURCE_BY_NAME, Resource, optionsFor } from '../core/resources';
+import { Column, RESOURCE_BY_NAME, Resource, getPath, optionsFor } from '../core/resources';
 
 /** Any section's table: search, filters, paging, and links into the edit form. All state lives in the URL. */
 @Component({
@@ -26,12 +26,21 @@ import { Column, RESOURCE_BY_NAME, Resource, optionsFor } from '../core/resource
           }
         </div>
 
+        @for (f of tabFilters(r); track f.key) {
+          <nav class="tabs" [attr.aria-label]="f.label">
+            <button type="button" class="tab" [class.active]="!filterValue(f.key)" (click)="setFilter(f.key, '')">All</button>
+            @for (o of options(f.options); track o.value) {
+              <button type="button" class="tab" [class.active]="filterValue(f.key) === o.value" (click)="setFilter(f.key, o.value)">{{ o.label }}</button>
+            }
+          </nav>
+        }
+
         <form class="toolbar" (ngSubmit)="search()">
           <label class="search">
             <span class="icon">search</span>
             <input name="q" [(ngModel)]="q" [placeholder]="'Search ' + r.label.toLowerCase()" />
           </label>
-          @for (f of r.filters; track f.key) {
+          @for (f of selectFilters(r); track f.key) {
             <select [name]="f.key" [ngModel]="filterValue(f.key)" (ngModelChange)="setFilter(f.key, $event)" [attr.aria-label]="f.label">
               <option value="">{{ f.label }}: all</option>
               @for (o of options(f.options); track o.value) {
@@ -66,7 +75,7 @@ import { Column, RESOURCE_BY_NAME, Resource, optionsFor } from '../core/resource
                     @for (c of r.columns; track c.key; let first = $first) {
                       <td>
                         @if (c.format === 'badge') {
-                          <span class="badge" [attr.data-v]="value(doc, c)">{{ value(doc, c) }}</span>
+                          <span class="badge" [attr.data-v]="raw(doc, c)">{{ value(doc, c) }}</span>
                         } @else if (first) {
                           <b>{{ value(doc, c) }}</b>
                           @if (doc['managed']) {
@@ -156,6 +165,9 @@ export class ResourceListPage {
 
   protected options = (source: Parameters<typeof optionsFor>[0]) => optionsFor(source, this.meta());
   protected value = (doc: Doc, column: Column) => cell(doc, column);
+  protected raw = (doc: Doc, column: Column) => String(getPath(doc, column.key) ?? '');
+  protected tabFilters = (r: Resource) => (r.filters ?? []).filter((f) => f.tabs);
+  protected selectFilters = (r: Resource) => (r.filters ?? []).filter((f) => !f.tabs);
   protected filterValue = (key: string) => this.query[key] ?? '';
   protected hasFilters = () => Object.keys(this.query).some((k) => k !== 'page');
   protected keyOf = (doc: Doc) => (this.resource()!.key === 'slug' ? doc['slug'] : doc['id']);

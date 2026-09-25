@@ -39,9 +39,10 @@ export type Field = {
 
 export type Section = { title: string; fields: Field[] };
 
-export type Column = { key: string; label: string; format?: 'money' | 'date' | 'datetime' | 'bool' | 'badge' | 'stars' };
+export type Column = { key: string; label: string; format?: 'money' | 'date' | 'datetime' | 'bool' | 'badge' | 'stars'; labels?: Record<string, string> };
 
-export type Filter = { key: string; label: string; options: OptionSource };
+/** tabs: shown as one-click tabs above the table instead of a dropdown. */
+export type Filter = { key: string; label: string; options: OptionSource; tabs?: boolean };
 
 export type Resource = {
   /** API path segment and route, e.g. "lab-tests". */
@@ -121,6 +122,9 @@ export const RESOURCES: Resource[] = [
           { key: 'city', label: 'City', type: 'select', options: CITY },
           { key: 'area', label: 'Area / locality', type: 'text' },
           { key: 'clinicName', label: 'Clinic name', type: 'text' },
+          { key: 'phone', label: 'Direct phone (Call button)', type: 'text', hint: 'Leave empty to use the clinic’s number.' },
+          { key: 'whatsapp', label: 'WhatsApp number', type: 'text', hint: 'Digits with country code, e.g. 919876543210. Empty = clinic’s or Curxx’s WhatsApp.' },
+          { key: 'rank', label: 'Ranking in its city & specialty', type: 'number', hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.' },
         ],
       },
       {
@@ -193,6 +197,8 @@ export const RESOURCES: Resource[] = [
           { key: 'address', label: 'Address', type: 'text', required: true, wide: true },
           { key: 'pincode', label: 'Pincode', type: 'text' },
           { key: 'phone', label: 'Phone', type: 'text' },
+          { key: 'whatsapp', label: 'WhatsApp number', type: 'text', hint: 'Digits with country code. Empty = Curxx’s WhatsApp.' },
+          { key: 'rank', label: 'Ranking in its city', type: 'number', hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.' },
           { key: 'geo.lat', label: 'Latitude', type: 'number' },
           { key: 'geo.lng', label: 'Longitude', type: 'number' },
         ],
@@ -349,6 +355,8 @@ export const RESOURCES: Resource[] = [
           { key: 'address', label: 'Address', type: 'text', required: true, wide: true },
           { key: 'pincode', label: 'Pincode', type: 'text', required: true },
           { key: 'phone', label: 'Phone', type: 'text' },
+          { key: 'whatsapp', label: 'WhatsApp number', type: 'text', hint: 'Digits with country code. Empty = Curxx’s WhatsApp.' },
+          { key: 'rank', label: 'Ranking in its city', type: 'number', hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.' },
           { key: 'geo.lat', label: 'Latitude', type: 'number', required: true },
           { key: 'geo.lng', label: 'Longitude', type: 'number', required: true },
           { key: 'openHours', label: 'Opening hours', type: 'text' },
@@ -607,13 +615,13 @@ export const RESOURCES: Resource[] = [
       { key: 'patient.name', label: 'Patient' },
       { key: 'doctorSlug', label: 'Doctor' },
       { key: 'startsAt', label: 'When', format: 'datetime' },
-      { key: 'mode', label: 'Mode', format: 'badge' },
+      { key: 'mode', label: 'Mode', format: 'badge', labels: { clinic: 'Clinic visit', video: 'Video', audio: 'Teleconsultation (phone)' } },
       { key: 'amount', label: 'Amount', format: 'money' },
       { key: 'status', label: 'Status', format: 'badge' },
     ],
     filters: [
       { key: 'status', label: 'Status', options: { static: ['confirmed', 'completed', 'cancelled'] } },
-      { key: 'mode', label: 'Mode', options: { static: ['clinic', 'video'] } },
+      { key: 'mode', label: 'Mode', tabs: true, options: { static: [{ value: 'clinic', label: 'Clinic visit' }, { value: 'video', label: 'Video' }, { value: 'audio', label: 'Teleconsultation (phone)' }] } },
     ],
     sections: [
       {
@@ -622,7 +630,7 @@ export const RESOURCES: Resource[] = [
           { key: 'reference', label: 'Reference', type: 'text', readonly: true },
           { key: 'doctorSlug', label: 'Doctor', type: 'text', readonly: true },
           { key: 'startsAt', label: 'When', type: 'text', readonly: true },
-          { key: 'mode', label: 'Mode', type: 'text', readonly: true },
+          { key: 'mode', label: 'Mode (clinic / video / audio = phone teleconsultation)', type: 'text', readonly: true },
           { key: 'amount', label: 'Amount (₹)', type: 'number', readonly: true },
           { key: 'patient.name', label: 'Patient', type: 'text', readonly: true },
           { key: 'patient.phone', label: 'Phone', type: 'text', readonly: true },
@@ -728,7 +736,8 @@ export const RESOURCES: Resource[] = [
       { key: 'name', label: 'Name' },
       { key: 'phone', label: 'Mobile' },
       { key: 'email', label: 'Email' },
-      { key: 'abhaId', label: 'ABHA' },
+      { key: 'loginCount', label: 'Sign-ins' },
+      { key: 'lastLoginAt', label: 'Last sign-in', format: 'datetime' },
       { key: 'createdAt', label: 'Joined', format: 'date' },
     ],
     filters: [{ key: 'gender', label: 'Gender', options: { static: ['female', 'male', 'other'] } }],
@@ -738,10 +747,173 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'phone', label: 'Mobile', type: 'text', readonly: true },
           { key: 'abhaId', label: 'ABHA ID', type: 'text', readonly: true },
+          { key: 'loginCount', label: 'Sign-ins', type: 'number', readonly: true },
+          { key: 'lastLoginAt', label: 'Last sign-in', type: 'text', readonly: true },
+          { key: 'createdAt', label: 'Joined', type: 'text', readonly: true },
           { key: 'name', label: 'Name', type: 'text' },
           { key: 'email', label: 'Email', type: 'text' },
           { key: 'gender', label: 'Gender', type: 'select', options: { static: ['female', 'male', 'other'] } },
           { key: 'bloodGroup', label: 'Blood group', type: 'select', options: { static: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] } },
+        ],
+      },
+    ],
+  },
+  // ---------------------------------------------------------------- Tracking
+  {
+    name: 'interactions',
+    label: 'Calls & WhatsApp',
+    singular: 'tap',
+    icon: 'call',
+    group: 'Tracking',
+    key: 'id',
+    canCreate: false,
+    canDelete: true,
+    description: 'Every tap on a Call or WhatsApp button on a doctor, hospital/clinic or lab profile — who (if signed in), which profile, and when. Use it to follow up and to see demand.',
+    columns: [
+      { key: 'kind', label: 'Button', format: 'badge', labels: { call: 'Call', whatsapp: 'WhatsApp' } },
+      { key: 'targetName', label: 'Profile' },
+      { key: 'targetType', label: 'Type', format: 'badge', labels: { doctor: 'Doctor', facility: 'Hospital / clinic', lab: 'Lab', site: 'Curxx' } },
+      { key: 'city', label: 'City' },
+      { key: 'userPhone', label: 'Patient (if signed in)' },
+      { key: 'device', label: 'Device' },
+      { key: 'createdAt', label: 'When', format: 'datetime' },
+    ],
+    filters: [
+      { key: 'kind', label: 'Button', tabs: true, options: { static: [{ value: 'call', label: 'Calls' }, { value: 'whatsapp', label: 'WhatsApp' }] } },
+      { key: 'targetType', label: 'Profile type', options: { static: [{ value: 'doctor', label: 'Doctor' }, { value: 'facility', label: 'Hospital / clinic' }, { value: 'lab', label: 'Lab' }] } },
+      { key: 'city', label: 'City', options: { meta: 'cities' } },
+      { key: 'device', label: 'Device', options: { static: ['mobile', 'desktop'] } },
+    ],
+    sections: [
+      {
+        title: 'Tap',
+        fields: [
+          { key: 'kind', label: 'Button', type: 'text', readonly: true },
+          { key: 'targetName', label: 'Profile', type: 'text', readonly: true },
+          { key: 'targetType', label: 'Profile type', type: 'text', readonly: true },
+          { key: 'targetSlug', label: 'Profile slug', type: 'text', readonly: true },
+          { key: 'number', label: 'Number opened', type: 'text', readonly: true },
+          { key: 'userPhone', label: 'Patient mobile (if signed in)', type: 'text', readonly: true },
+          { key: 'city', label: 'City', type: 'text', readonly: true },
+          { key: 'page', label: 'Page', type: 'text', readonly: true, wide: true },
+          { key: 'createdAt', label: 'When', type: 'text', readonly: true },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'login-events',
+    label: 'Sign-ins',
+    singular: 'sign-in',
+    icon: 'login',
+    group: 'Tracking',
+    key: 'id',
+    canCreate: false,
+    canDelete: false,
+    description: 'Every patient sign-in, newest first. “First sign-in” marks a new account. Open a patient under Patients to see their full history.',
+    columns: [
+      { key: 'name', label: 'Name' },
+      { key: 'phone', label: 'Mobile' },
+      { key: 'firstLogin', label: 'New account', format: 'bool' },
+      { key: 'device', label: 'Device' },
+      { key: 'createdAt', label: 'When', format: 'datetime' },
+    ],
+    filters: [
+      { key: 'firstLogin', label: 'New accounts', tabs: true, options: { static: [{ value: 'true', label: 'New accounts' }, { value: 'false', label: 'Returning' }] } },
+      { key: 'device', label: 'Device', options: { static: ['mobile', 'desktop'] } },
+    ],
+    sections: [
+      {
+        title: 'Sign-in',
+        fields: [
+          { key: 'name', label: 'Name', type: 'text', readonly: true },
+          { key: 'phone', label: 'Mobile', type: 'text', readonly: true },
+          { key: 'firstLogin', label: 'First sign-in (new account)', type: 'boolean', readonly: true },
+          { key: 'device', label: 'Device', type: 'text', readonly: true },
+          { key: 'userAgent', label: 'Browser', type: 'text', readonly: true, wide: true },
+          { key: 'createdAt', label: 'When', type: 'text', readonly: true },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'reports',
+    label: 'Wrong-info reports',
+    singular: 'report',
+    icon: 'report',
+    group: 'Tracking',
+    key: 'id',
+    canCreate: false,
+    canDelete: true,
+    description: 'Patients’ “Report wrong information” submissions from profiles. Fix the record, then mark the report Fixed.',
+    columns: [
+      { key: 'targetName', label: 'Profile' },
+      { key: 'targetType', label: 'Type', format: 'badge', labels: { doctor: 'Doctor', facility: 'Hospital / clinic', lab: 'Lab', 'lab-test': 'Lab test', medicine: 'Medicine' } },
+      { key: 'issues', label: 'What’s wrong' },
+      { key: 'city', label: 'City' },
+      { key: 'status', label: 'Status', format: 'badge' },
+      { key: 'createdAt', label: 'Received', format: 'datetime' },
+    ],
+    filters: [
+      { key: 'status', label: 'Status', tabs: true, options: { static: ['new', 'reviewing', 'fixed', 'rejected'] } },
+      { key: 'targetType', label: 'Type', options: { static: [{ value: 'doctor', label: 'Doctor' }, { value: 'facility', label: 'Hospital / clinic' }, { value: 'lab', label: 'Lab' }] } },
+      { key: 'city', label: 'City', options: { meta: 'cities' } },
+    ],
+    sections: [
+      {
+        title: 'Report',
+        fields: [
+          { key: 'targetName', label: 'Profile', type: 'text', readonly: true },
+          { key: 'targetType', label: 'Type', type: 'text', readonly: true },
+          { key: 'targetSlug', label: 'Profile slug', type: 'text', readonly: true, hint: 'Open the matching section (Doctors, Hospitals & clinics, Labs) and search this slug to fix it.' },
+          { key: 'issues', label: 'What’s wrong', type: 'tags', readonly: true, wide: true },
+          { key: 'details', label: 'Details', type: 'textarea', readonly: true, wide: true },
+          { key: 'contact', label: 'Reporter contact', type: 'text', readonly: true },
+          { key: 'page', label: 'Page', type: 'text', readonly: true },
+          { key: 'status', label: 'Status', type: 'select', options: { static: ['new', 'reviewing', 'fixed', 'rejected'] } },
+          { key: 'note', label: 'Team note', type: 'textarea', wide: true },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'videos',
+    label: 'Reels & videos',
+    singular: 'video',
+    icon: 'smart_display',
+    group: 'Content',
+    key: 'slug',
+    canCreate: true,
+    canDelete: true,
+    description: 'YouTube videos, Shorts, Instagram reels or .mp4 files. Link one to a doctor to show it on their profile; mark it Featured to show it on the homepage.',
+    defaults: { kind: 'reel', published: true, featured: false, order: 10 },
+    columns: [
+      { key: 'title', label: 'Title' },
+      { key: 'kind', label: 'Kind', format: 'badge' },
+      { key: 'doctorSlug', label: 'Doctor' },
+      { key: 'featured', label: 'Homepage', format: 'bool' },
+      { key: 'published', label: 'Published', format: 'bool' },
+    ],
+    filters: [
+      { key: 'kind', label: 'Kind', tabs: true, options: { static: [{ value: 'reel', label: 'Reels' }, { value: 'video', label: 'Videos' }] } },
+      { key: 'published', label: 'Published', options: { static: [{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }] } },
+    ],
+    sections: [
+      {
+        title: 'Video',
+        fields: [
+          { key: 'title', label: 'Title', type: 'text', required: true, wide: true },
+          { key: 'slug', label: 'Slug', type: 'text', createOnly: true },
+          { key: 'kind', label: 'Kind', type: 'select', options: { static: [{ value: 'reel', label: 'Reel (vertical)' }, { value: 'video', label: 'Video (landscape)' }] } },
+          { key: 'url', label: 'Link', type: 'url', required: true, wide: true, placeholder: 'https://www.youtube.com/shorts/… or https://www.instagram.com/reel/…', hint: 'YouTube, YouTube Shorts, Instagram reel, or a direct .mp4 link.' },
+          { key: 'thumbnailUrl', label: 'Thumbnail image URL (optional)', type: 'url', wide: true },
+          { key: 'description', label: 'Description', type: 'textarea', wide: true },
+          { key: 'doctorSlug', label: 'Doctor slug (shows on their profile)', type: 'text', placeholder: 'dr-priya-sharma' },
+          { key: 'specialty', label: 'Specialty', type: 'select', options: { meta: 'specialties' } },
+          { key: 'city', label: 'City', type: 'select', options: { meta: 'cities' } },
+          { key: 'featured', label: 'Show on homepage', type: 'boolean' },
+          { key: 'published', label: 'Published', type: 'boolean' },
+          { key: 'order', label: 'Order', type: 'number' },
         ],
       },
     ],
