@@ -66,6 +66,7 @@ export type Resource = {
 
 const YES_NO: OptionSource = { static: [{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }] };
 const CITY: OptionSource = { meta: 'cities' };
+const SOURCE: OptionSource = { static: [{ value: 'doctar', label: 'Imported from Doctar' }] };
 
 export const RESOURCES: Resource[] = [
   // ---------------------------------------------------------------- Doctors & care
@@ -80,7 +81,7 @@ export const RESOURCES: Resource[] = [
     canDelete: true,
     description: 'Every doctor on Curxx. Attach a doctor to a hospital or clinic and set their weekly schedule — bookable slots are generated from it automatically.',
     sitePath: (d) => `/doctor/${d['slug']}`,
-    defaults: { gender: 'female', languages: ['English', 'Hindi'], verified: true, freeVideo: false, instant: false, experienceYears: 5, fee: 500, videoFee: 400 },
+    defaults: { gender: 'female', languages: ['English', 'Hindi'], verified: true, freeVideo: false, instant: false, bookable: true, feeVerified: true, experienceYears: 5, fee: 500, videoFee: 400 },
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'specialty', label: 'Specialty', format: 'badge' },
@@ -95,6 +96,7 @@ export const RESOURCES: Resource[] = [
       { key: 'specialty', label: 'Specialty', options: { meta: 'specialties' } },
       { key: 'freeVideo', label: 'Free video', options: YES_NO },
       { key: 'managed', label: 'Admin-edited', options: YES_NO },
+      { key: 'source', label: 'Source', options: SOURCE },
     ],
     sections: [
       {
@@ -131,10 +133,12 @@ export const RESOURCES: Resource[] = [
         title: 'Fees & availability',
         fields: [
           { key: 'fee', label: 'Clinic visit fee (₹)', type: 'number', required: true },
+          { key: 'feeVerified', label: 'Fee confirmed by the doctor', type: 'boolean', hint: 'No = the website shows the fee as “Approx.”' },
           { key: 'videoFee', label: 'Video consult fee (₹)', type: 'number' },
           { key: 'freeVideo', label: 'Offers a free first video consult', type: 'boolean' },
           { key: 'instant', label: 'Online 24x7', type: 'boolean' },
           { key: 'verified', label: 'Credentials verified', type: 'boolean' },
+          { key: 'bookable', label: 'Online booking', type: 'boolean', hint: 'No = listing only: no slots, the profile offers Call / Visit instead.' },
           { key: 'schedule', label: 'Weekly schedule', type: 'schedule', wide: true },
           { key: 'consultHours', label: 'Consult hours (auto)', type: 'text', readonly: true, wide: true },
         ],
@@ -173,6 +177,7 @@ export const RESOURCES: Resource[] = [
       { key: 'city', label: 'City', options: CITY },
       { key: 'category', label: 'Type', options: { meta: 'facilityTypes' } },
       { key: 'emergency24x7', label: '24x7 emergency', options: YES_NO },
+      { key: 'source', label: 'Source', options: SOURCE },
     ],
     sections: [
       {
