@@ -137,7 +137,7 @@ export const RESOURCES: Resource[] = [
           { key: 'videoFee', label: 'Video consult fee (₹)', type: 'number' },
           { key: 'freeVideo', label: 'Offers a free first video consult', type: 'boolean' },
           { key: 'instant', label: 'Online 24x7', type: 'boolean' },
-          { key: 'verified', label: 'Credentials verified', type: 'boolean' },
+          { key: 'verified', label: 'Credentials verified by Curxx', type: 'boolean', hint: 'Yes only after Curxx has checked the registration: the site then shows verified ticks. Imported doctors start at No.' },
           { key: 'bookable', label: 'Online booking', type: 'boolean', hint: 'No = listing only: no slots, the profile offers Call / Visit instead.' },
           { key: 'schedule', label: 'Weekly schedule', type: 'schedule', wide: true },
           { key: 'consultHours', label: 'Consult hours (auto)', type: 'text', readonly: true, wide: true },
