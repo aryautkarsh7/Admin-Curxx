@@ -40,6 +40,33 @@ export type Stats = {
   recentOrders: Doc[];
 };
 
+/** GET /admin/doctar/status: the Doctar directory the website reads doctors and hospitals from. */
+export type DoctarStatus = {
+  enabled: boolean;
+  status: 'disabled' | 'loading' | 'ready' | 'unavailable';
+  builtAt: string | null;
+  /** Where the current copy came from: a fresh read of Doctar, or the saved copy loaded at start-up. */
+  from: 'doctar' | 'cache' | null;
+  error: string | null;
+  doctors: number;
+  facilities: number;
+  overlays: number;
+  report: {
+    scanned: number;
+    doctors: number;
+    facilities: number;
+    skippedDoctors: Record<string, number>;
+    skippedFacilities: Record<string, number>;
+    seconds: number;
+    peakRssMb: number;
+    peakHeapMb: number;
+    capped: boolean;
+  } | null;
+};
+
+export type DoctarOverlay = { rank?: number; featured?: boolean; hidden?: boolean; bookable?: boolean; phone?: string; whatsapp?: string; photoUrl?: string; note?: string };
+export type DoctarKind = 'doctors' | 'facilities';
+
 /** The API's error body → a sentence to show in the UI. */
 export function errorText(error: unknown, fallback = 'Something went wrong. Please try again.') {
   if (error instanceof HttpErrorResponse) {
@@ -100,6 +127,28 @@ export class Api {
 
   saveRankings(type: RankedType, ranks: { slug: string; rank: number }[]) {
     return firstValueFrom(this.http.post<{ updated: number }>(`${this.base}/rankings`, { type, ranks }));
+  }
+
+  doctarStatus() {
+    return firstValueFrom(this.http.get<DoctarStatus>(`${this.base}/doctar/status`));
+  }
+
+  doctarRefresh() {
+    return firstValueFrom(this.http.post<DoctarStatus & { started: boolean }>(`${this.base}/doctar/refresh`, {}));
+  }
+
+  doctarList(kind: DoctarKind, query: Record<string, string | number | undefined>) {
+    let params = new HttpParams();
+    for (const [k, v] of Object.entries(query)) if (v !== undefined && v !== '') params = params.set(k, String(v));
+    return firstValueFrom(this.http.get<Page>(`${this.base}/doctar/${kind}`, { params }));
+  }
+
+  saveDoctarOverlay(kind: 'doctor' | 'facility', doctarId: string, body: DoctarOverlay) {
+    return firstValueFrom(this.http.put<{ overlay: Doc }>(`${this.base}/doctar/overlays/${kind}/${doctarId}`, body)).then((r) => r.overlay);
+  }
+
+  removeDoctarOverlay(kind: 'doctor' | 'facility', doctarId: string) {
+    return firstValueFrom(this.http.delete<{ ok: boolean }>(`${this.base}/doctar/overlays/${kind}/${doctarId}`));
   }
 
   userActivity(id: string) {

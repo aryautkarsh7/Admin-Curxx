@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Api, Doc, Meta, RankedType, errorText } from '../core/api';
 import { optionsFor } from '../core/resources';
 
-type Row = { slug: string; name: string; sub: string; rating?: number; reviews?: number; rank: number };
+type Row = { slug: string; name: string; sub: string; rating?: number; reviews?: number; rank: number; doctar: boolean };
 
 const TABS: { type: RankedType; label: string; resource: string }[] = [
   { type: 'doctors', label: 'Doctors', resource: 'doctors' },
@@ -84,7 +84,11 @@ const TABS: { type: RankedType; label: string; resource: string }[] = [
                 <tr class="rank-row" [class.ranked]="row.rank > 0">
                   <td class="rank-pos">{{ row.rank > 0 ? row.rank : '' }}</td>
                   <td>
-                    <a [routerLink]="['/', resourceName(), row.slug]"><b>{{ row.name }}</b></a>
+                    @if (row.doctar) {
+                      <a routerLink="/doctar" [queryParams]="{ kind: type(), q: row.slug }"><b>{{ row.name }}</b></a> <span class="badge">Doctar</span>
+                    } @else {
+                      <a [routerLink]="['/', resourceName(), row.slug]"><b>{{ row.name }}</b></a>
+                    }
                     <br /><span class="muted small">{{ row.sub }}</span>
                   </td>
                   <td class="small nowrap">{{ row.rating ? row.rating.toFixed(1) + ' ★' : '—' }}@if (row.reviews) {<span class="muted"> · {{ row.reviews }}</span>}</td>
@@ -207,7 +211,7 @@ export class RankingsPage {
   private toRow(d: Doc): Row {
     const sub =
       this.type() === 'doctors' ? [d['clinicName'], d['area']].filter(Boolean).join(' · ') : [d['category'] ?? d['type'], d['area']].filter(Boolean).join(' · ');
-    return { slug: d['slug'], name: d['name'], sub, rating: d['rating'], reviews: d['reviewCount'], rank: Number(d['rank']) || 0 };
+    return { slug: d['slug'], name: d['name'], sub, rating: d['rating'], reviews: d['reviewCount'], rank: Number(d['rank']) || 0, doctar: d['source'] === 'doctar' };
   }
 
   /** Pinned rows first, numbered 1…n with no gaps; the rest keep their loaded order. */

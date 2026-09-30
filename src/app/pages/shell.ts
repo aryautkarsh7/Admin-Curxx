@@ -16,6 +16,7 @@ import { GROUPS, RESOURCES } from '../core/resources';
             <span class="icon">dashboard</span>Dashboard
           </a>
           <a routerLink="/rankings" routerLinkActive="active" (click)="navOpen.set(false)"><span class="icon">leaderboard</span>Rankings</a>
+          <a routerLink="/doctar" routerLinkActive="active" (click)="navOpen.set(false)"><span class="icon">cloud_sync</span>Doctar directory</a>
           @for (group of groups; track group) {
             <p class="nav-group">{{ group }}</p>
             @for (r of resourcesIn(group); track r.name) {
