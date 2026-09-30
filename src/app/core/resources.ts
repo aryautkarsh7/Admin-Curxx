@@ -67,6 +67,20 @@ export type Resource = {
 const YES_NO: OptionSource = { static: [{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }] };
 const CITY: OptionSource = { meta: 'cities' };
 const SOURCE: OptionSource = { static: [{ value: 'doctar', label: 'Imported from Doctar' }] };
+/** Generated seed records (sample data): the website hides them unless the API's SHOW_SAMPLE_DATA is on. */
+const SAMPLE_FILTER: Filter = { key: 'sample', label: 'Real or sample', options: { static: [{ value: 'false', label: 'Real' }, { value: 'true', label: 'Sample data' }] }, tabs: true };
+const SAMPLE_COLUMN: Column = { key: 'sample', label: 'Sample', format: 'bool' };
+const SAMPLE_SECTION: Section = {
+  title: 'Website visibility',
+  fields: [
+    {
+      key: 'sample',
+      label: 'Sample data (hidden on the website)',
+      type: 'boolean',
+      hint: 'A generated example record. The website hides it unless the server’s SHOW_SAMPLE_DATA is on, even after you edit it. Untick only if it is real and checked.',
+    },
+  ],
+};
 
 export const RESOURCES: Resource[] = [
   // ---------------------------------------------------------------- Doctors & care
@@ -90,8 +104,10 @@ export const RESOURCES: Resource[] = [
       { key: 'fee', label: 'Fee', format: 'money' },
       { key: 'rating', label: 'Rating', format: 'stars' },
       { key: 'managed', label: 'Admin-edited', format: 'bool' },
+      SAMPLE_COLUMN,
     ],
     filters: [
+      SAMPLE_FILTER,
       { key: 'city', label: 'City', options: CITY },
       { key: 'specialty', label: 'Specialty', options: { meta: 'specialties' } },
       { key: 'freeVideo', label: 'Free video', options: YES_NO },
@@ -151,6 +167,7 @@ export const RESOURCES: Resource[] = [
           { key: 'recommendPercent', label: 'Recommend %', type: 'number', readonly: true },
         ],
       },
+      SAMPLE_SECTION,
     ],
   },
   {
@@ -172,8 +189,10 @@ export const RESOURCES: Resource[] = [
       { key: 'area', label: 'Area' },
       { key: 'emergency24x7', label: '24x7', format: 'bool' },
       { key: 'rating', label: 'Rating', format: 'stars' },
+      SAMPLE_COLUMN,
     ],
     filters: [
+      SAMPLE_FILTER,
       { key: 'city', label: 'City', options: CITY },
       { key: 'category', label: 'Type', options: { meta: 'facilityTypes' } },
       { key: 'emergency24x7', label: '24x7 emergency', options: YES_NO },
@@ -291,8 +310,10 @@ export const RESOURCES: Resource[] = [
       { key: 'rating', label: 'Rating', format: 'stars' },
       { key: 'mode', label: 'Mode', format: 'badge' },
       { key: 'createdAt', label: 'Date', format: 'date' },
+      SAMPLE_COLUMN,
     ],
     filters: [
+      SAMPLE_FILTER,
       { key: 'rating', label: 'Rating', options: { static: ['5', '4', '3', '2', '1'] } },
       { key: 'mode', label: 'Mode', options: { static: ['clinic', 'video'] } },
     ],
@@ -310,6 +331,7 @@ export const RESOURCES: Resource[] = [
           { key: 'tags', label: 'Tags', type: 'tags', wide: true },
         ],
       },
+      SAMPLE_SECTION,
     ],
   },
 
@@ -934,7 +956,7 @@ export const RESOURCES: Resource[] = [
     canCreate: true,
     canDelete: true,
     description:
-      'Single values used across the website: marketing claims, app links and images. Kind “Claim — must be true” marks statements that can’t be checked against our data (e.g. 1.2M+ consultations) — confirm each is true before it goes live. Counts that we can compute (doctors, clinics, ratings, tests) are live and have no setting. Deleting a built-in setting restores its original value on the next deploy.',
+      'Single values used across the website: marketing claims, app links and images. Kind “Claim — must be true” marks statements that can’t be checked against our data (e.g. 1.2M+ consultations) — confirm each is true before it goes live. Counts that we can compute (doctors, clinics, ratings, tests) are live and have no setting. The seeded claims are examples: the website hides every claim until someone saves it here. Deleting a built-in setting restores its original value on the next deploy.',
     defaults: { group: 'General', kind: 'text' },
     columns: [
       { key: 'label', label: 'Setting' },
@@ -1026,8 +1048,10 @@ export const RESOURCES: Resource[] = [
       { key: 'rating', label: 'Rating', format: 'stars' },
       { key: 'published', label: 'Published', format: 'bool' },
       { key: 'order', label: 'Order' },
+      SAMPLE_COLUMN,
     ],
     filters: [
+      SAMPLE_FILTER,
       { key: 'audience', label: 'Shown to', options: { static: [{ value: 'patient', label: 'Patients (homepage)' }, { value: 'provider', label: 'Doctors (For Providers)' }] } },
       { key: 'published', label: 'Published', options: YES_NO },
     ],
@@ -1050,6 +1074,7 @@ export const RESOURCES: Resource[] = [
           { key: 'text', label: 'Quote', type: 'textarea', required: true, wide: true },
         ],
       },
+      SAMPLE_SECTION,
     ],
   },
   {
