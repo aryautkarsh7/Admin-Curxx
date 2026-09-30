@@ -5,6 +5,15 @@ schedules that become bookable slots), hospitals & clinics (19 facility types), 
 labs, lab tests & scans, medicines, blog articles — and work through appointments, orders, leads
 and patient accounts.
 
+## Project commands
+
+```bash
+npm run format
+npm run format:check
+npm run lint
+npm run test
+```
+
 ## Run locally
 
 ```bash
