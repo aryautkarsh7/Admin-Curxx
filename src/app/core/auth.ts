@@ -49,7 +49,9 @@ export class Auth {
 /** True when the JWT's exp has passed (checked client-side so the UI can bounce early). */
 function expired(token: string) {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]!.replace(/-/g, '+').replace(/_/g, '/'))) as { exp?: number };
+    const payload = JSON.parse(
+      atob(token.split('.')[1]!.replace(/-/g, '+').replace(/_/g, '/')),
+    ) as { exp?: number };
     return payload.exp ? payload.exp * 1000 < Date.now() : false;
   } catch {
     return true;
@@ -59,7 +61,10 @@ function expired(token: string) {
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const auth = inject(Auth);
   const token = auth.token();
-  const withToken = token && !request.url.endsWith('/auth/login') ? request.clone({ setHeaders: { authorization: `Bearer ${token}` } }) : request;
+  const withToken =
+    token && !request.url.endsWith('/auth/login')
+      ? request.clone({ setHeaders: { authorization: `Bearer ${token}` } })
+      : request;
   return next(withToken).pipe(
     catchError((error: unknown) => {
       // An expired or revoked session sends the admin back to sign in.
@@ -72,5 +77,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
 export const authGuard: CanActivateFn = (_route, state) => {
   const auth = inject(Auth);
   if (auth.signedIn()) return true;
-  return inject(Router).createUrlTree(['/login'], { queryParams: state.url !== '/' ? { next: state.url } : {} });
+  return inject(Router).createUrlTree(['/login'], {
+    queryParams: state.url !== '/' ? { next: state.url } : {},
+  });
 };

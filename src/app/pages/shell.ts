@@ -10,17 +10,31 @@ import { GROUPS, RESOURCES } from '../core/resources';
   template: `
     <div class="layout" [class.nav-open]="navOpen()">
       <aside class="sidebar">
-        <a routerLink="/" class="brand" (click)="navOpen.set(false)"><span>cur</span><b>xx</b> <small>Admin</small></a>
+        <a routerLink="/" class="brand" (click)="navOpen.set(false)"
+          ><span>cur</span><b>xx</b> <small>Admin</small></a
+        >
         <nav>
-          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="navOpen.set(false)">
+          <a
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            (click)="navOpen.set(false)"
+          >
             <span class="icon">dashboard</span>Dashboard
           </a>
-          <a routerLink="/rankings" routerLinkActive="active" (click)="navOpen.set(false)"><span class="icon">leaderboard</span>Rankings</a>
-          <a routerLink="/doctar" routerLinkActive="active" (click)="navOpen.set(false)"><span class="icon">cloud_sync</span>Doctar directory</a>
+          <a routerLink="/rankings" routerLinkActive="active" (click)="navOpen.set(false)"
+            ><span class="icon">leaderboard</span>Rankings</a
+          >
+          <a routerLink="/doctar" routerLinkActive="active" (click)="navOpen.set(false)"
+            ><span class="icon">cloud_sync</span>Doctar directory</a
+          >
           @for (group of groups; track group) {
             <p class="nav-group">{{ group }}</p>
             @for (r of resourcesIn(group); track r.name) {
-              <a [routerLink]="['/', r.name]" routerLinkActive="active" (click)="navOpen.set(false)"><span class="icon">{{ r.icon }}</span>{{ r.label }}</a>
+              <a [routerLink]="['/', r.name]" routerLinkActive="active" (click)="navOpen.set(false)"
+                ><span class="icon">{{ r.icon }}</span
+                >{{ r.label }}</a
+              >
             }
           }
         </nav>
@@ -32,7 +46,14 @@ import { GROUPS, RESOURCES } from '../core/resources';
       </aside>
       <div class="main">
         <header class="topbar">
-          <button class="btn ghost icon-btn" type="button" aria-label="Menu" (click)="navOpen.set(!navOpen())"><span class="icon">menu</span></button>
+          <button
+            class="btn ghost icon-btn"
+            type="button"
+            aria-label="Menu"
+            (click)="navOpen.set(!navOpen())"
+          >
+            <span class="icon">menu</span>
+          </button>
           <span class="muted small">Curxx admin · changes go live on the website immediately</span>
         </header>
         <router-outlet />

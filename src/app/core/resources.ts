@@ -3,7 +3,21 @@ import type { Doc, Meta } from './api';
 /** Where a select's options come from: a fixed list, or the /admin/meta payload. */
 export type OptionSource =
   | { static: (string | { value: string; label: string })[] }
-  | { meta: 'cities' | 'specialties' | 'facilities' | 'facilityTypes' | 'labCategories' | 'medicineCategories' | 'specialtyCategories' | 'articleCategories' | 'conditions' | 'surgeryCategories' | 'contentPages' | 'settingGroups' };
+  | {
+      meta:
+        | 'cities'
+        | 'specialties'
+        | 'facilities'
+        | 'facilityTypes'
+        | 'labCategories'
+        | 'medicineCategories'
+        | 'specialtyCategories'
+        | 'articleCategories'
+        | 'conditions'
+        | 'surgeryCategories'
+        | 'contentPages'
+        | 'settingGroups';
+    };
 
 export type FieldType =
   | 'text' // single line
@@ -39,7 +53,12 @@ export type Field = {
 
 export type Section = { title: string; fields: Field[] };
 
-export type Column = { key: string; label: string; format?: 'money' | 'date' | 'datetime' | 'bool' | 'badge' | 'stars'; labels?: Record<string, string> };
+export type Column = {
+  key: string;
+  label: string;
+  format?: 'money' | 'date' | 'datetime' | 'bool' | 'badge' | 'stars';
+  labels?: Record<string, string>;
+};
 
 /** tabs: shown as one-click tabs above the table instead of a dropdown. */
 export type Filter = { key: string; label: string; options: OptionSource; tabs?: boolean };
@@ -64,11 +83,26 @@ export type Resource = {
   description: string;
 };
 
-const YES_NO: OptionSource = { static: [{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }] };
+const YES_NO: OptionSource = {
+  static: [
+    { value: 'true', label: 'Yes' },
+    { value: 'false', label: 'No' },
+  ],
+};
 const CITY: OptionSource = { meta: 'cities' };
 const SOURCE: OptionSource = { static: [{ value: 'doctar', label: 'Imported from Doctar' }] };
 /** Generated seed records (sample data): the website hides them unless the API's SHOW_SAMPLE_DATA is on. */
-const SAMPLE_FILTER: Filter = { key: 'sample', label: 'Real or sample', options: { static: [{ value: 'false', label: 'Real' }, { value: 'true', label: 'Sample data' }] }, tabs: true };
+const SAMPLE_FILTER: Filter = {
+  key: 'sample',
+  label: 'Real or sample',
+  options: {
+    static: [
+      { value: 'false', label: 'Real' },
+      { value: 'true', label: 'Sample data' },
+    ],
+  },
+  tabs: true,
+};
 const SAMPLE_COLUMN: Column = { key: 'sample', label: 'Sample', format: 'bool' };
 const SAMPLE_SECTION: Section = {
   title: 'Website visibility',
@@ -93,9 +127,21 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Every doctor on Curxx. Attach a doctor to a hospital or clinic and set their weekly schedule — bookable slots are generated from it automatically.',
+    description:
+      'Every doctor on Curxx. Attach a doctor to a hospital or clinic and set their weekly schedule — bookable slots are generated from it automatically.',
     sitePath: (d) => `/doctor/${d['slug']}`,
-    defaults: { gender: 'female', languages: ['English', 'Hindi'], verified: true, freeVideo: false, instant: false, bookable: true, feeVerified: true, experienceYears: 5, fee: 500, videoFee: 400 },
+    defaults: {
+      gender: 'female',
+      languages: ['English', 'Hindi'],
+      verified: true,
+      freeVideo: false,
+      instant: false,
+      bookable: true,
+      feeVerified: true,
+      experienceYears: 5,
+      fee: 500,
+      videoFee: 400,
+    },
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'specialty', label: 'Specialty', format: 'badge' },
@@ -118,45 +164,143 @@ export const RESOURCES: Resource[] = [
       {
         title: 'Profile',
         fields: [
-          { key: 'name', label: 'Full name', type: 'text', required: true, placeholder: 'Dr. Asha Rao' },
-          { key: 'slug', label: 'URL slug', type: 'text', createOnly: true, hint: 'Leave blank to generate from the name. Becomes /doctor/<slug>.' },
-          { key: 'title', label: 'Title', type: 'text', required: true, placeholder: 'Consultant Dermatologist' },
-          { key: 'qualification', label: 'Qualification', type: 'text', required: true, placeholder: 'MBBS, MD - Dermatology' },
-          { key: 'specialty', label: 'Specialty', type: 'select', required: true, options: { meta: 'specialties' } },
-          { key: 'focusAreas', label: 'Focus areas', type: 'tags', hint: 'Focus-area slugs of the specialty, e.g. acne-scars, hair-scalp' },
-          { key: 'gender', label: 'Gender', type: 'select', options: { static: ['female', 'male'] } },
+          {
+            key: 'name',
+            label: 'Full name',
+            type: 'text',
+            required: true,
+            placeholder: 'Dr. Asha Rao',
+          },
+          {
+            key: 'slug',
+            label: 'URL slug',
+            type: 'text',
+            createOnly: true,
+            hint: 'Leave blank to generate from the name. Becomes /doctor/<slug>.',
+          },
+          {
+            key: 'title',
+            label: 'Title',
+            type: 'text',
+            required: true,
+            placeholder: 'Consultant Dermatologist',
+          },
+          {
+            key: 'qualification',
+            label: 'Qualification',
+            type: 'text',
+            required: true,
+            placeholder: 'MBBS, MD - Dermatology',
+          },
+          {
+            key: 'specialty',
+            label: 'Specialty',
+            type: 'select',
+            required: true,
+            options: { meta: 'specialties' },
+          },
+          {
+            key: 'focusAreas',
+            label: 'Focus areas',
+            type: 'tags',
+            hint: 'Focus-area slugs of the specialty, e.g. acne-scars, hair-scalp',
+          },
+          {
+            key: 'gender',
+            label: 'Gender',
+            type: 'select',
+            options: { static: ['female', 'male'] },
+          },
           { key: 'experienceYears', label: 'Experience (years)', type: 'number', required: true },
-          { key: 'languages', label: 'Languages', type: 'tags', placeholder: 'English, Hindi, Kannada' },
-          { key: 'registration', label: 'Medical council registration', type: 'text', placeholder: 'KMC 12345' },
+          {
+            key: 'languages',
+            label: 'Languages',
+            type: 'tags',
+            placeholder: 'English, Hindi, Kannada',
+          },
+          {
+            key: 'registration',
+            label: 'Medical council registration',
+            type: 'text',
+            placeholder: 'KMC 12345',
+          },
           { key: 'photoUrl', label: 'Photo URL', type: 'url', wide: true },
           { key: 'about', label: 'About', type: 'textarea', wide: true },
-          { key: 'education', label: 'Education', type: 'json', wide: true, hint: '[{"degree":"MBBS","institute":"AIIMS New Delhi","year":2010}]' },
+          {
+            key: 'education',
+            label: 'Education',
+            type: 'json',
+            wide: true,
+            hint: '[{"degree":"MBBS","institute":"AIIMS New Delhi","year":2010}]',
+          },
         ],
       },
       {
         title: 'Where they practise',
         fields: [
-          { key: 'facilitySlug', label: 'Hospital / clinic', type: 'lookup', options: { meta: 'facilities' }, hint: 'Picking one fills clinic, area and city automatically.' },
+          {
+            key: 'facilitySlug',
+            label: 'Hospital / clinic',
+            type: 'lookup',
+            options: { meta: 'facilities' },
+            hint: 'Picking one fills clinic, area and city automatically.',
+          },
           { key: 'city', label: 'City', type: 'select', options: CITY },
           { key: 'area', label: 'Area / locality', type: 'text' },
           { key: 'clinicName', label: 'Clinic name', type: 'text' },
-          { key: 'phone', label: 'Direct phone (Call button)', type: 'text', hint: 'Leave empty to use the clinic’s number.' },
-          { key: 'whatsapp', label: 'WhatsApp number', type: 'text', hint: 'Digits with country code, e.g. 919876543210. Empty = clinic’s or Curxx’s WhatsApp.' },
-          { key: 'rank', label: 'Ranking in its city & specialty', type: 'number', hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.' },
+          {
+            key: 'phone',
+            label: 'Direct phone (Call button)',
+            type: 'text',
+            hint: 'Leave empty to use the clinic’s number.',
+          },
+          {
+            key: 'whatsapp',
+            label: 'WhatsApp number',
+            type: 'text',
+            hint: 'Digits with country code, e.g. 919876543210. Empty = clinic’s or Curxx’s WhatsApp.',
+          },
+          {
+            key: 'rank',
+            label: 'Ranking in its city & specialty',
+            type: 'number',
+            hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.',
+          },
         ],
       },
       {
         title: 'Fees & availability',
         fields: [
           { key: 'fee', label: 'Clinic visit fee (₹)', type: 'number', required: true },
-          { key: 'feeVerified', label: 'Fee confirmed by the doctor', type: 'boolean', hint: 'No = the website shows the fee as “Approx.”' },
+          {
+            key: 'feeVerified',
+            label: 'Fee confirmed by the doctor',
+            type: 'boolean',
+            hint: 'No = the website shows the fee as “Approx.”',
+          },
           { key: 'videoFee', label: 'Video consult fee (₹)', type: 'number' },
           { key: 'freeVideo', label: 'Offers a free first video consult', type: 'boolean' },
           { key: 'instant', label: 'Online 24x7', type: 'boolean' },
-          { key: 'verified', label: 'Credentials verified by Curxx', type: 'boolean', hint: 'Yes only after Curxx has checked the registration: the site then shows verified ticks. Imported doctors start at No.' },
-          { key: 'bookable', label: 'Online booking', type: 'boolean', hint: 'No = listing only: no slots, the profile offers Call / Visit instead.' },
+          {
+            key: 'verified',
+            label: 'Credentials verified by Curxx',
+            type: 'boolean',
+            hint: 'Yes only after Curxx has checked the registration: the site then shows verified ticks. Imported doctors start at No.',
+          },
+          {
+            key: 'bookable',
+            label: 'Online booking',
+            type: 'boolean',
+            hint: 'No = listing only: no slots, the profile offers Call / Visit instead.',
+          },
           { key: 'schedule', label: 'Weekly schedule', type: 'schedule', wide: true },
-          { key: 'consultHours', label: 'Consult hours (auto)', type: 'text', readonly: true, wide: true },
+          {
+            key: 'consultHours',
+            label: 'Consult hours (auto)',
+            type: 'text',
+            readonly: true,
+            wide: true,
+          },
         ],
       },
       {
@@ -179,9 +323,18 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Hospitals, clinics and centres, with their facility type (one of 19), departments and hours.',
+    description:
+      'Hospitals, clinics and centres, with their facility type (one of 19), departments and hours.',
     sitePath: (d) => `/clinic/${d['slug']}`,
-    defaults: { category: 'Clinic', type: 'clinic', openHours: '9:00 AM – 9:00 PM', opdHours: '10:00 AM – 8:00 PM', rating: 4.5, emergency24x7: false, nabh: false },
+    defaults: {
+      category: 'Clinic',
+      type: 'clinic',
+      openHours: '9:00 AM – 9:00 PM',
+      opdHours: '10:00 AM – 8:00 PM',
+      rating: 4.5,
+      emergency24x7: false,
+      nabh: false,
+    },
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'category', label: 'Type', format: 'badge' },
@@ -203,14 +356,43 @@ export const RESOURCES: Resource[] = [
         title: 'Basics',
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true },
-          { key: 'slug', label: 'URL slug', type: 'text', createOnly: true, hint: 'Leave blank to generate from the name.' },
+          {
+            key: 'slug',
+            label: 'URL slug',
+            type: 'text',
+            createOnly: true,
+            hint: 'Leave blank to generate from the name.',
+          },
           { key: 'shortName', label: 'Short name', type: 'text' },
-          { key: 'category', label: 'Facility type', type: 'select', required: true, options: { meta: 'facilityTypes' } },
-          { key: 'type', label: 'Listed under', type: 'select', options: { static: [{ value: 'hospital', label: 'Hospitals' }, { value: 'clinic', label: 'Clinics' }] }, hint: 'Set automatically from the facility type.' },
+          {
+            key: 'category',
+            label: 'Facility type',
+            type: 'select',
+            required: true,
+            options: { meta: 'facilityTypes' },
+          },
+          {
+            key: 'type',
+            label: 'Listed under',
+            type: 'select',
+            options: {
+              static: [
+                { value: 'hospital', label: 'Hospitals' },
+                { value: 'clinic', label: 'Clinics' },
+              ],
+            },
+            hint: 'Set automatically from the facility type.',
+          },
           { key: 'tagline', label: 'Tagline', type: 'text' },
           { key: 'about', label: 'About', type: 'textarea', wide: true },
           { key: 'photoUrl', label: 'Photo URL', type: 'url', wide: true },
-          { key: 'gallery', label: 'More photos (one URL per line)', type: 'list', wide: true, hint: 'Shown beside the main photo on the profile. Empty = the default clinic interior photo (Site settings).' },
+          {
+            key: 'gallery',
+            label: 'More photos (one URL per line)',
+            type: 'list',
+            wide: true,
+            hint: 'Shown beside the main photo on the profile. Empty = the default clinic interior photo (Site settings).',
+          },
         ],
       },
       {
@@ -221,8 +403,18 @@ export const RESOURCES: Resource[] = [
           { key: 'address', label: 'Address', type: 'text', required: true, wide: true },
           { key: 'pincode', label: 'Pincode', type: 'text' },
           { key: 'phone', label: 'Phone', type: 'text' },
-          { key: 'whatsapp', label: 'WhatsApp number', type: 'text', hint: 'Digits with country code. Empty = Curxx’s WhatsApp.' },
-          { key: 'rank', label: 'Ranking in its city', type: 'number', hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.' },
+          {
+            key: 'whatsapp',
+            label: 'WhatsApp number',
+            type: 'text',
+            hint: 'Digits with country code. Empty = Curxx’s WhatsApp.',
+          },
+          {
+            key: 'rank',
+            label: 'Ranking in its city',
+            type: 'number',
+            hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.',
+          },
           { key: 'geo.lat', label: 'Latitude', type: 'number' },
           { key: 'geo.lng', label: 'Longitude', type: 'number' },
         ],
@@ -230,13 +422,29 @@ export const RESOURCES: Resource[] = [
       {
         title: 'Hours & services',
         fields: [
-          { key: 'openHours', label: 'Opening hours', type: 'text', placeholder: '8:00 AM – 10:00 PM or Open 24 hours' },
-          { key: 'opdHours', label: 'OPD (consultation) hours', type: 'text', hint: 'Doctors’ schedules should fall inside these.' },
+          {
+            key: 'openHours',
+            label: 'Opening hours',
+            type: 'text',
+            placeholder: '8:00 AM – 10:00 PM or Open 24 hours',
+          },
+          {
+            key: 'opdHours',
+            label: 'OPD (consultation) hours',
+            type: 'text',
+            hint: 'Doctors’ schedules should fall inside these.',
+          },
           { key: 'emergency24x7', label: '24x7 emergency', type: 'boolean' },
           { key: 'nabh', label: 'NABH accredited', type: 'boolean' },
           { key: 'beds', label: 'Beds', type: 'number' },
           { key: 'established', label: 'Established (year)', type: 'number' },
-          { key: 'specialties', label: 'Specialties', type: 'multiselect', options: { meta: 'specialties' }, wide: true },
+          {
+            key: 'specialties',
+            label: 'Specialties',
+            type: 'multiselect',
+            options: { meta: 'specialties' },
+            wide: true,
+          },
           { key: 'departments', label: 'Departments', type: 'tags', wide: true },
           { key: 'services', label: 'Services', type: 'tags', wide: true },
           { key: 'amenities', label: 'Amenities', type: 'tags', wide: true },
@@ -272,23 +480,57 @@ export const RESOURCES: Resource[] = [
       {
         title: 'Specialty',
         fields: [
-          { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Dermatologist' },
-          { key: 'plural', label: 'Plural', type: 'text', required: true, placeholder: 'Dermatologists' },
+          {
+            key: 'name',
+            label: 'Name',
+            type: 'text',
+            required: true,
+            placeholder: 'Dermatologist',
+          },
+          {
+            key: 'plural',
+            label: 'Plural',
+            type: 'text',
+            required: true,
+            placeholder: 'Dermatologists',
+          },
           { key: 'slug', label: 'URL slug', type: 'text', createOnly: true },
-          { key: 'category', label: 'Category', type: 'select', options: { meta: 'specialtyCategories' } },
+          {
+            key: 'category',
+            label: 'Category',
+            type: 'select',
+            options: { meta: 'specialtyCategories' },
+          },
           { key: 'icon', label: 'Icon (Material Symbols name)', type: 'text' },
           { key: 'fromPrice', label: 'Clinic fee from (₹)', type: 'number', required: true },
           { key: 'videoFrom', label: 'Video fee from (₹)', type: 'number' },
           { key: 'video', label: 'Offers video consults', type: 'boolean' },
           { key: 'popular', label: 'Popular', type: 'boolean' },
-          { key: 'homeOrder', label: 'Homepage tile position', type: 'number', hint: '1–12 shows it among the 12 homepage specialty tiles, in that order. 0 = not on the homepage.' },
+          {
+            key: 'homeOrder',
+            label: 'Homepage tile position',
+            type: 'number',
+            hint: '1–12 shows it among the 12 homepage specialty tiles, in that order. 0 = not on the homepage.',
+          },
           { key: 'order', label: 'Order in its category', type: 'number' },
           { key: 'description', label: 'Description', type: 'textarea', wide: true },
           { key: 'conditions', label: 'Conditions treated', type: 'list', wide: true },
           { key: 'whenToSee', label: 'When to see one', type: 'list', wide: true },
-          { key: 'keywords', label: 'Search / triage keywords', type: 'text', wide: true, hint: 'Pipe-separated, e.g. acne|pimple|rash' },
+          {
+            key: 'keywords',
+            label: 'Search / triage keywords',
+            type: 'text',
+            wide: true,
+            hint: 'Pipe-separated, e.g. acne|pimple|rash',
+          },
           { key: 'related', label: 'Related specialty slugs', type: 'tags', wide: true },
-          { key: 'subSpecialties', label: 'Focus areas', type: 'json', wide: true, hint: '[{"slug":"acne-scars","name":"Acne & Scars","description":"…","icon":"face"}]' },
+          {
+            key: 'subSpecialties',
+            label: 'Focus areas',
+            type: 'json',
+            wide: true,
+            hint: '[{"slug":"acne-scars","name":"Acne & Scars","description":"…","icon":"face"}]',
+          },
         ],
       },
     ],
@@ -302,7 +544,8 @@ export const RESOURCES: Resource[] = [
     key: 'id',
     canCreate: true,
     canDelete: true,
-    description: 'Patient reviews. A doctor’s rating and review count are recalculated after every change.',
+    description:
+      'Patient reviews. A doctor’s rating and review count are recalculated after every change.',
     defaults: { rating: 5, mode: 'clinic', verified: true },
     columns: [
       { key: 'doctorSlug', label: 'Doctor' },
@@ -321,10 +564,34 @@ export const RESOURCES: Resource[] = [
       {
         title: 'Review',
         fields: [
-          { key: 'doctorSlug', label: 'Doctor slug', type: 'text', required: true, placeholder: 'dr-priya-sharma' },
-          { key: 'author', label: 'Author', type: 'text', required: true, placeholder: 'Ramesh K.' },
-          { key: 'rating', label: 'Rating', type: 'select', required: true, options: { static: ['5', '4', '3', '2', '1'] } },
-          { key: 'mode', label: 'Mode', type: 'select', required: true, options: { static: ['clinic', 'video'] } },
+          {
+            key: 'doctorSlug',
+            label: 'Doctor slug',
+            type: 'text',
+            required: true,
+            placeholder: 'dr-priya-sharma',
+          },
+          {
+            key: 'author',
+            label: 'Author',
+            type: 'text',
+            required: true,
+            placeholder: 'Ramesh K.',
+          },
+          {
+            key: 'rating',
+            label: 'Rating',
+            type: 'select',
+            required: true,
+            options: { static: ['5', '4', '3', '2', '1'] },
+          },
+          {
+            key: 'mode',
+            label: 'Mode',
+            type: 'select',
+            required: true,
+            options: { static: ['clinic', 'video'] },
+          },
           { key: 'visitedFor', label: 'Visited for', type: 'text' },
           { key: 'verified', label: 'Verified visit', type: 'boolean' },
           { key: 'text', label: 'Review', type: 'textarea', required: true, wide: true },
@@ -345,9 +612,19 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Partner labs and imaging centres: accreditation, home collection radius and the tests each one runs.',
+    description:
+      'Partner labs and imaging centres: accreditation, home collection radius and the tests each one runs.',
     sitePath: (d) => `/lab/${d['slug']}`,
-    defaults: { type: 'centre', homeCollection: true, walkIn: true, collectionRadiusKm: 8, phlebotomists: 4, reportTat: '6–24 hours', accreditations: ['NABL'], rating: 4.6 },
+    defaults: {
+      type: 'centre',
+      homeCollection: true,
+      walkIn: true,
+      collectionRadiusKm: 8,
+      phlebotomists: 4,
+      reportTat: '6–24 hours',
+      accreditations: ['NABL'],
+      rating: 4.6,
+    },
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'type', label: 'Type', format: 'badge' },
@@ -366,10 +643,21 @@ export const RESOURCES: Resource[] = [
           { key: 'name', label: 'Name', type: 'text', required: true },
           { key: 'slug', label: 'URL slug', type: 'text', createOnly: true },
           { key: 'shortName', label: 'Short name', type: 'text' },
-          { key: 'type', label: 'Type', type: 'select', required: true, options: { static: ['reference', 'centre', 'imaging'] } },
+          {
+            key: 'type',
+            label: 'Type',
+            type: 'select',
+            required: true,
+            options: { static: ['reference', 'centre', 'imaging'] },
+          },
           { key: 'tagline', label: 'Tagline', type: 'text', wide: true },
           { key: 'about', label: 'About', type: 'textarea', wide: true },
-          { key: 'accreditations', label: 'Accreditations', type: 'multiselect', options: { static: ['NABL', 'CAP', 'ISO 15189'] } },
+          {
+            key: 'accreditations',
+            label: 'Accreditations',
+            type: 'multiselect',
+            options: { static: ['NABL', 'CAP', 'ISO 15189'] },
+          },
           { key: 'nablCertificate', label: 'NABL certificate no.', type: 'text' },
           { key: 'photoUrl', label: 'Photo URL', type: 'url', wide: true },
         ],
@@ -382,12 +670,27 @@ export const RESOURCES: Resource[] = [
           { key: 'address', label: 'Address', type: 'text', required: true, wide: true },
           { key: 'pincode', label: 'Pincode', type: 'text', required: true },
           { key: 'phone', label: 'Phone', type: 'text' },
-          { key: 'whatsapp', label: 'WhatsApp number', type: 'text', hint: 'Digits with country code. Empty = Curxx’s WhatsApp.' },
-          { key: 'rank', label: 'Ranking in its city', type: 'number', hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.' },
+          {
+            key: 'whatsapp',
+            label: 'WhatsApp number',
+            type: 'text',
+            hint: 'Digits with country code. Empty = Curxx’s WhatsApp.',
+          },
+          {
+            key: 'rank',
+            label: 'Ranking in its city',
+            type: 'number',
+            hint: '1 = shown first in listings, 2 = second… 0 or empty = normal order. Easier to set on the Rankings page.',
+          },
           { key: 'geo.lat', label: 'Latitude', type: 'number', required: true },
           { key: 'geo.lng', label: 'Longitude', type: 'number', required: true },
           { key: 'openHours', label: 'Opening hours', type: 'text' },
-          { key: 'sundayHours', label: 'Sunday hours', type: 'text', hint: '"Closed" if shut on Sundays' },
+          {
+            key: 'sundayHours',
+            label: 'Sunday hours',
+            type: 'text',
+            hint: '"Closed" if shut on Sundays',
+          },
         ],
       },
       {
@@ -417,9 +720,18 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'The diagnostic directory: packages, single tests, scans and procedures. Scans and procedures are visit-only.',
+    description:
+      'The diagnostic directory: packages, single tests, scans and procedures. Scans and procedures are visit-only.',
     sitePath: (d) => `/lab-tests/${d['slug']}`,
-    defaults: { kind: 'test', homeCollection: true, testsIncluded: 1, sampleType: 'Blood', reportTime: '6h Digital Report', turnaround: 'Reports within 6h', popularity: 50 },
+    defaults: {
+      kind: 'test',
+      homeCollection: true,
+      testsIncluded: 1,
+      sampleType: 'Blood',
+      reportTime: '6h Digital Report',
+      turnaround: 'Reports within 6h',
+      popularity: 50,
+    },
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'kind', label: 'Kind', format: 'badge' },
@@ -439,22 +751,50 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true },
           { key: 'slug', label: 'URL slug', type: 'text', createOnly: true },
-          { key: 'kind', label: 'Kind', type: 'select', required: true, options: { static: ['package', 'test', 'scan', 'procedure'] } },
+          {
+            key: 'kind',
+            label: 'Kind',
+            type: 'select',
+            required: true,
+            options: { static: ['package', 'test', 'scan', 'procedure'] },
+          },
           { key: 'department', label: 'Department', type: 'text' },
           { key: 'homeCollection', label: 'Sample can be collected at home', type: 'boolean' },
-          { key: 'categories', label: 'Categories', type: 'multiselect', options: { meta: 'labCategories' }, wide: true },
+          {
+            key: 'categories',
+            label: 'Categories',
+            type: 'multiselect',
+            options: { meta: 'labCategories' },
+            wide: true,
+          },
           { key: 'price', label: 'Price (₹)', type: 'number', required: true },
           { key: 'mrp', label: 'MRP (₹)', type: 'number', required: true },
-          { key: 'testsIncluded', label: 'Parameters / tests included', type: 'number', required: true },
+          {
+            key: 'testsIncluded',
+            label: 'Parameters / tests included',
+            type: 'number',
+            required: true,
+          },
           { key: 'sampleType', label: 'Sample type', type: 'text' },
           { key: 'fastingHours', label: 'Fasting hours', type: 'text', placeholder: '8 to 10' },
-          { key: 'fastingLabel', label: 'Fasting label', type: 'text', placeholder: 'No fasting required' },
+          {
+            key: 'fastingLabel',
+            label: 'Fasting label',
+            type: 'text',
+            placeholder: 'No fasting required',
+          },
           { key: 'reportTime', label: 'Report time', type: 'text' },
           { key: 'turnaround', label: 'Turnaround', type: 'text' },
           { key: 'popularity', label: 'Popularity (sort)', type: 'number' },
           { key: 'covers', label: 'Covers', type: 'textarea', wide: true },
           { key: 'highlights', label: 'Highlights', type: 'list', wide: true },
-          { key: 'parameterGroups', label: 'Parameter groups', type: 'json', wide: true, hint: '[{"name":"Liver","icon":"labs","count":2,"parameters":["SGOT","SGPT"]}]' },
+          {
+            key: 'parameterGroups',
+            label: 'Parameter groups',
+            type: 'json',
+            wide: true,
+            hint: '[{"name":"Liver","icon":"labs","count":2,"parameters":["SGOT","SGPT"]}]',
+          },
         ],
       },
     ],
@@ -468,7 +808,8 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Health concerns (Diabetes, Thyroid…) and departments (Radiology, Microbiology…) that group tests.',
+    description:
+      'Health concerns (Diabetes, Thyroid…) and departments (Radiology, Microbiology…) that group tests.',
     defaults: { icon: 'labs', group: 'concern', order: 50 },
     columns: [
       { key: 'name', label: 'Name' },
@@ -482,7 +823,12 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true },
           { key: 'slug', label: 'Slug', type: 'text', createOnly: true },
-          { key: 'group', label: 'Group', type: 'select', options: { static: ['concern', 'department'] } },
+          {
+            key: 'group',
+            label: 'Group',
+            type: 'select',
+            options: { static: ['concern', 'department'] },
+          },
           { key: 'icon', label: 'Icon', type: 'text' },
           { key: 'order', label: 'Order', type: 'number' },
         ],
@@ -500,9 +846,17 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Medicines and wellness products, with price, stock and whether a prescription is needed.',
+    description:
+      'Medicines and wellness products, with price, stock and whether a prescription is needed.',
     sitePath: (d) => `/medicines/${d['slug']}`,
-    defaults: { form: 'Tablet', rxRequired: false, stock: 100, icon: 'pill', rating: 4.5, popularity: 50 },
+    defaults: {
+      form: 'Tablet',
+      rxRequired: false,
+      stock: 100,
+      icon: 'pill',
+      rating: 4.5,
+      popularity: 50,
+    },
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'manufacturer', label: 'Manufacturer' },
@@ -520,12 +874,24 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true },
           { key: 'slug', label: 'URL slug', type: 'text', createOnly: true },
-          { key: 'subtitle', label: 'Subtitle', type: 'text', required: true, placeholder: 'Paracetamol 650mg · Strip of 15' },
+          {
+            key: 'subtitle',
+            label: 'Subtitle',
+            type: 'text',
+            required: true,
+            placeholder: 'Paracetamol 650mg · Strip of 15',
+          },
           { key: 'manufacturer', label: 'Manufacturer', type: 'text', required: true },
           { key: 'composition', label: 'Composition', type: 'text', required: true, wide: true },
           { key: 'form', label: 'Form', type: 'text', required: true },
           { key: 'packSize', label: 'Pack size', type: 'text', required: true },
-          { key: 'categories', label: 'Categories', type: 'multiselect', options: { meta: 'medicineCategories' }, wide: true },
+          {
+            key: 'categories',
+            label: 'Categories',
+            type: 'multiselect',
+            options: { meta: 'medicineCategories' },
+            wide: true,
+          },
           { key: 'imageUrl', label: 'Image URL', type: 'url', wide: true },
         ],
       },
@@ -593,7 +959,8 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Health articles on /blog. Link one to a condition to show it on that condition’s page.',
+    description:
+      'Health articles on /blog. Link one to a condition to show it on that condition’s page.',
     sitePath: (d) => `/blog/${d['slug']}`,
     defaults: { readMinutes: 5, featured: false, sections: [{ heading: 'Overview', body: '' }] },
     columns: [
@@ -610,17 +977,39 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'title', label: 'Title', type: 'text', required: true, wide: true },
           { key: 'slug', label: 'URL slug', type: 'text', createOnly: true },
-          { key: 'category', label: 'Category', type: 'lookup', required: true, options: { meta: 'articleCategories' } },
+          {
+            key: 'category',
+            label: 'Category',
+            type: 'lookup',
+            required: true,
+            options: { meta: 'articleCategories' },
+          },
           { key: 'excerpt', label: 'Excerpt', type: 'textarea', required: true, wide: true },
           { key: 'coverUrl', label: 'Cover image URL', type: 'url', wide: true },
           { key: 'readMinutes', label: 'Read time (min)', type: 'number' },
           { key: 'publishedAt', label: 'Published on', type: 'date' },
           { key: 'featured', label: 'Featured', type: 'boolean' },
-          { key: 'condition', label: 'Condition page', type: 'select', options: { meta: 'conditions' } },
-          { key: 'author.slug', label: 'Author (doctor slug)', type: 'text', hint: 'Name and title are filled in from the doctor’s profile.' },
+          {
+            key: 'condition',
+            label: 'Condition page',
+            type: 'select',
+            options: { meta: 'conditions' },
+          },
+          {
+            key: 'author.slug',
+            label: 'Author (doctor slug)',
+            type: 'text',
+            hint: 'Name and title are filled in from the doctor’s profile.',
+          },
           { key: 'tags', label: 'Tags', type: 'tags', wide: true },
           { key: 'keyTakeaways', label: 'Key takeaways', type: 'list', wide: true },
-          { key: 'sections', label: 'Sections', type: 'json', wide: true, hint: '[{"heading":"What is it?","body":"…"}]' },
+          {
+            key: 'sections',
+            label: 'Sections',
+            type: 'json',
+            wide: true,
+            hint: '[{"heading":"What is it?","body":"…"}]',
+          },
         ],
       },
     ],
@@ -636,19 +1025,40 @@ export const RESOURCES: Resource[] = [
     key: 'id',
     canCreate: false,
     canDelete: false,
-    description: 'Bookings made by patients. You can change the status (cancelling frees the slot) and add notes.',
+    description:
+      'Bookings made by patients. You can change the status (cancelling frees the slot) and add notes.',
     columns: [
       { key: 'reference', label: 'Reference' },
       { key: 'patient.name', label: 'Patient' },
       { key: 'doctorSlug', label: 'Doctor' },
       { key: 'startsAt', label: 'When', format: 'datetime' },
-      { key: 'mode', label: 'Mode', format: 'badge', labels: { clinic: 'Clinic visit', video: 'Video', audio: 'Teleconsultation (phone)' } },
+      {
+        key: 'mode',
+        label: 'Mode',
+        format: 'badge',
+        labels: { clinic: 'Clinic visit', video: 'Video', audio: 'Teleconsultation (phone)' },
+      },
       { key: 'amount', label: 'Amount', format: 'money' },
       { key: 'status', label: 'Status', format: 'badge' },
     ],
     filters: [
-      { key: 'status', label: 'Status', options: { static: ['confirmed', 'completed', 'cancelled'] } },
-      { key: 'mode', label: 'Mode', tabs: true, options: { static: [{ value: 'clinic', label: 'Clinic visit' }, { value: 'video', label: 'Video' }, { value: 'audio', label: 'Teleconsultation (phone)' }] } },
+      {
+        key: 'status',
+        label: 'Status',
+        options: { static: ['confirmed', 'completed', 'cancelled'] },
+      },
+      {
+        key: 'mode',
+        label: 'Mode',
+        tabs: true,
+        options: {
+          static: [
+            { value: 'clinic', label: 'Clinic visit' },
+            { value: 'video', label: 'Video' },
+            { value: 'audio', label: 'Teleconsultation (phone)' },
+          ],
+        },
+      },
     ],
     sections: [
       {
@@ -657,12 +1067,22 @@ export const RESOURCES: Resource[] = [
           { key: 'reference', label: 'Reference', type: 'text', readonly: true },
           { key: 'doctorSlug', label: 'Doctor', type: 'text', readonly: true },
           { key: 'startsAt', label: 'When', type: 'text', readonly: true },
-          { key: 'mode', label: 'Mode (clinic / video / audio = phone teleconsultation)', type: 'text', readonly: true },
+          {
+            key: 'mode',
+            label: 'Mode (clinic / video / audio = phone teleconsultation)',
+            type: 'text',
+            readonly: true,
+          },
           { key: 'amount', label: 'Amount (₹)', type: 'number', readonly: true },
           { key: 'patient.name', label: 'Patient', type: 'text', readonly: true },
           { key: 'patient.phone', label: 'Phone', type: 'text', readonly: true },
           { key: 'focus', label: 'Concern', type: 'text', readonly: true },
-          { key: 'status', label: 'Status', type: 'select', options: { static: ['confirmed', 'completed', 'cancelled'] } },
+          {
+            key: 'status',
+            label: 'Status',
+            type: 'select',
+            options: { static: ['confirmed', 'completed', 'cancelled'] },
+          },
           { key: 'notes', label: 'Notes', type: 'textarea', wide: true },
         ],
       },
@@ -677,7 +1097,8 @@ export const RESOURCES: Resource[] = [
     key: 'id',
     canCreate: false,
     canDelete: false,
-    description: 'Medicine and lab-test orders. Move an order through its statuses as it is packed, delivered or reported.',
+    description:
+      'Medicine and lab-test orders. Move an order through its statuses as it is packed, delivered or reported.',
     columns: [
       { key: 'reference', label: 'Reference' },
       { key: 'kind', label: 'Kind', format: 'badge' },
@@ -687,7 +1108,23 @@ export const RESOURCES: Resource[] = [
     ],
     filters: [
       { key: 'kind', label: 'Kind', options: { static: ['pharmacy', 'lab'] } },
-      { key: 'status', label: 'Status', options: { static: ['placed', 'confirmed', 'packed', 'out_for_delivery', 'delivered', 'sample_scheduled', 'sample_collected', 'report_ready', 'cancelled'] } },
+      {
+        key: 'status',
+        label: 'Status',
+        options: {
+          static: [
+            'placed',
+            'confirmed',
+            'packed',
+            'out_for_delivery',
+            'delivered',
+            'sample_scheduled',
+            'sample_collected',
+            'report_ready',
+            'cancelled',
+          ],
+        },
+      },
     ],
     sections: [
       {
@@ -699,8 +1136,30 @@ export const RESOURCES: Resource[] = [
           { key: 'patient.name', label: 'Patient', type: 'text', readonly: true },
           { key: 'lab.name', label: 'Lab', type: 'text', readonly: true },
           { key: 'pickup.window', label: 'Collection window', type: 'text', readonly: true },
-          { key: 'status', label: 'Status', type: 'select', options: { static: ['placed', 'confirmed', 'packed', 'out_for_delivery', 'delivered', 'sample_scheduled', 'sample_collected', 'report_ready', 'cancelled'] } },
-          { key: 'payment.status', label: 'Payment status', type: 'select', options: { static: ['pending', 'paid', 'refunded'] } },
+          {
+            key: 'status',
+            label: 'Status',
+            type: 'select',
+            options: {
+              static: [
+                'placed',
+                'confirmed',
+                'packed',
+                'out_for_delivery',
+                'delivered',
+                'sample_scheduled',
+                'sample_collected',
+                'report_ready',
+                'cancelled',
+              ],
+            },
+          },
+          {
+            key: 'payment.status',
+            label: 'Payment status',
+            type: 'select',
+            options: { static: ['pending', 'paid', 'refunded'] },
+          },
           { key: 'items', label: 'Items', type: 'json', readonly: true, wide: true },
           { key: 'address', label: 'Address', type: 'json', readonly: true, wide: true },
         ],
@@ -716,7 +1175,8 @@ export const RESOURCES: Resource[] = [
     key: 'id',
     canCreate: false,
     canDelete: true,
-    description: 'Surgery consultations, Curxx Plus sign-ups, partner and corporate enquiries, and callback requests.',
+    description:
+      'Surgery consultations, Curxx Plus sign-ups, partner and corporate enquiries, and callback requests.',
     columns: [
       { key: 'kind', label: 'Kind', format: 'badge' },
       { key: 'name', label: 'Name' },
@@ -727,8 +1187,26 @@ export const RESOURCES: Resource[] = [
       { key: 'createdAt', label: 'Received', format: 'datetime' },
     ],
     filters: [
-      { key: 'kind', label: 'Kind', options: { static: ['surgery', 'plus', 'provider', 'hospital', 'corporate', 'callback', 'newsletter'] } },
-      { key: 'status', label: 'Status', options: { static: ['new', 'contacted', 'converted', 'closed'] } },
+      {
+        key: 'kind',
+        label: 'Kind',
+        options: {
+          static: [
+            'surgery',
+            'plus',
+            'provider',
+            'hospital',
+            'corporate',
+            'callback',
+            'newsletter',
+          ],
+        },
+      },
+      {
+        key: 'status',
+        label: 'Status',
+        options: { static: ['new', 'contacted', 'converted', 'closed'] },
+      },
     ],
     sections: [
       {
@@ -743,7 +1221,12 @@ export const RESOURCES: Resource[] = [
           { key: 'organisation', label: 'Organisation', type: 'text', readonly: true },
           { key: 'source', label: 'Source', type: 'text', readonly: true },
           { key: 'message', label: 'Message', type: 'textarea', readonly: true, wide: true },
-          { key: 'status', label: 'Status', type: 'select', options: { static: ['new', 'contacted', 'converted', 'closed'] } },
+          {
+            key: 'status',
+            label: 'Status',
+            type: 'select',
+            options: { static: ['new', 'contacted', 'converted', 'closed'] },
+          },
           { key: 'note', label: 'Team note', type: 'textarea', wide: true },
         ],
       },
@@ -758,7 +1241,8 @@ export const RESOURCES: Resource[] = [
     key: 'id',
     canCreate: false,
     canDelete: false,
-    description: 'Registered patient accounts. Mobile numbers can’t be changed here — they are the login.',
+    description:
+      'Registered patient accounts. Mobile numbers can’t be changed here — they are the login.',
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'phone', label: 'Mobile' },
@@ -779,8 +1263,18 @@ export const RESOURCES: Resource[] = [
           { key: 'createdAt', label: 'Joined', type: 'text', readonly: true },
           { key: 'name', label: 'Name', type: 'text' },
           { key: 'email', label: 'Email', type: 'text' },
-          { key: 'gender', label: 'Gender', type: 'select', options: { static: ['female', 'male', 'other'] } },
-          { key: 'bloodGroup', label: 'Blood group', type: 'select', options: { static: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] } },
+          {
+            key: 'gender',
+            label: 'Gender',
+            type: 'select',
+            options: { static: ['female', 'male', 'other'] },
+          },
+          {
+            key: 'bloodGroup',
+            label: 'Blood group',
+            type: 'select',
+            options: { static: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
+          },
         ],
       },
     ],
@@ -795,19 +1289,50 @@ export const RESOURCES: Resource[] = [
     key: 'id',
     canCreate: false,
     canDelete: true,
-    description: 'Every tap on a Call or WhatsApp button on a doctor, hospital/clinic or lab profile — who (if signed in), which profile, and when. Use it to follow up and to see demand.',
+    description:
+      'Every tap on a Call or WhatsApp button on a doctor, hospital/clinic or lab profile — who (if signed in), which profile, and when. Use it to follow up and to see demand.',
     columns: [
-      { key: 'kind', label: 'Button', format: 'badge', labels: { call: 'Call', whatsapp: 'WhatsApp' } },
+      {
+        key: 'kind',
+        label: 'Button',
+        format: 'badge',
+        labels: { call: 'Call', whatsapp: 'WhatsApp' },
+      },
       { key: 'targetName', label: 'Profile' },
-      { key: 'targetType', label: 'Type', format: 'badge', labels: { doctor: 'Doctor', facility: 'Hospital / clinic', lab: 'Lab', site: 'Curxx' } },
+      {
+        key: 'targetType',
+        label: 'Type',
+        format: 'badge',
+        labels: { doctor: 'Doctor', facility: 'Hospital / clinic', lab: 'Lab', site: 'Curxx' },
+      },
       { key: 'city', label: 'City' },
       { key: 'userPhone', label: 'Patient (if signed in)' },
       { key: 'device', label: 'Device' },
       { key: 'createdAt', label: 'When', format: 'datetime' },
     ],
     filters: [
-      { key: 'kind', label: 'Button', tabs: true, options: { static: [{ value: 'call', label: 'Calls' }, { value: 'whatsapp', label: 'WhatsApp' }] } },
-      { key: 'targetType', label: 'Profile type', options: { static: [{ value: 'doctor', label: 'Doctor' }, { value: 'facility', label: 'Hospital / clinic' }, { value: 'lab', label: 'Lab' }] } },
+      {
+        key: 'kind',
+        label: 'Button',
+        tabs: true,
+        options: {
+          static: [
+            { value: 'call', label: 'Calls' },
+            { value: 'whatsapp', label: 'WhatsApp' },
+          ],
+        },
+      },
+      {
+        key: 'targetType',
+        label: 'Profile type',
+        options: {
+          static: [
+            { value: 'doctor', label: 'Doctor' },
+            { value: 'facility', label: 'Hospital / clinic' },
+            { value: 'lab', label: 'Lab' },
+          ],
+        },
+      },
       { key: 'city', label: 'City', options: { meta: 'cities' } },
       { key: 'device', label: 'Device', options: { static: ['mobile', 'desktop'] } },
     ],
@@ -820,7 +1345,12 @@ export const RESOURCES: Resource[] = [
           { key: 'targetType', label: 'Profile type', type: 'text', readonly: true },
           { key: 'targetSlug', label: 'Profile slug', type: 'text', readonly: true },
           { key: 'number', label: 'Number opened', type: 'text', readonly: true },
-          { key: 'userPhone', label: 'Patient mobile (if signed in)', type: 'text', readonly: true },
+          {
+            key: 'userPhone',
+            label: 'Patient mobile (if signed in)',
+            type: 'text',
+            readonly: true,
+          },
           { key: 'city', label: 'City', type: 'text', readonly: true },
           { key: 'page', label: 'Page', type: 'text', readonly: true, wide: true },
           { key: 'createdAt', label: 'When', type: 'text', readonly: true },
@@ -837,7 +1367,8 @@ export const RESOURCES: Resource[] = [
     key: 'id',
     canCreate: false,
     canDelete: false,
-    description: 'Every patient sign-in, newest first. “First sign-in” marks a new account. Open a patient under Patients to see their full history.',
+    description:
+      'Every patient sign-in, newest first. “First sign-in” marks a new account. Open a patient under Patients to see their full history.',
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'phone', label: 'Mobile' },
@@ -846,7 +1377,17 @@ export const RESOURCES: Resource[] = [
       { key: 'createdAt', label: 'When', format: 'datetime' },
     ],
     filters: [
-      { key: 'firstLogin', label: 'New accounts', tabs: true, options: { static: [{ value: 'true', label: 'New accounts' }, { value: 'false', label: 'Returning' }] } },
+      {
+        key: 'firstLogin',
+        label: 'New accounts',
+        tabs: true,
+        options: {
+          static: [
+            { value: 'true', label: 'New accounts' },
+            { value: 'false', label: 'Returning' },
+          ],
+        },
+      },
       { key: 'device', label: 'Device', options: { static: ['mobile', 'desktop'] } },
     ],
     sections: [
@@ -855,7 +1396,12 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'name', label: 'Name', type: 'text', readonly: true },
           { key: 'phone', label: 'Mobile', type: 'text', readonly: true },
-          { key: 'firstLogin', label: 'First sign-in (new account)', type: 'boolean', readonly: true },
+          {
+            key: 'firstLogin',
+            label: 'First sign-in (new account)',
+            type: 'boolean',
+            readonly: true,
+          },
           { key: 'device', label: 'Device', type: 'text', readonly: true },
           { key: 'userAgent', label: 'Browser', type: 'text', readonly: true, wide: true },
           { key: 'createdAt', label: 'When', type: 'text', readonly: true },
@@ -872,18 +1418,45 @@ export const RESOURCES: Resource[] = [
     key: 'id',
     canCreate: false,
     canDelete: true,
-    description: 'Patients’ “Report wrong information” submissions from profiles. Fix the record, then mark the report Fixed.',
+    description:
+      'Patients’ “Report wrong information” submissions from profiles. Fix the record, then mark the report Fixed.',
     columns: [
       { key: 'targetName', label: 'Profile' },
-      { key: 'targetType', label: 'Type', format: 'badge', labels: { doctor: 'Doctor', facility: 'Hospital / clinic', lab: 'Lab', 'lab-test': 'Lab test', medicine: 'Medicine' } },
+      {
+        key: 'targetType',
+        label: 'Type',
+        format: 'badge',
+        labels: {
+          doctor: 'Doctor',
+          facility: 'Hospital / clinic',
+          lab: 'Lab',
+          'lab-test': 'Lab test',
+          medicine: 'Medicine',
+        },
+      },
       { key: 'issues', label: 'What’s wrong' },
       { key: 'city', label: 'City' },
       { key: 'status', label: 'Status', format: 'badge' },
       { key: 'createdAt', label: 'Received', format: 'datetime' },
     ],
     filters: [
-      { key: 'status', label: 'Status', tabs: true, options: { static: ['new', 'reviewing', 'fixed', 'rejected'] } },
-      { key: 'targetType', label: 'Type', options: { static: [{ value: 'doctor', label: 'Doctor' }, { value: 'facility', label: 'Hospital / clinic' }, { value: 'lab', label: 'Lab' }] } },
+      {
+        key: 'status',
+        label: 'Status',
+        tabs: true,
+        options: { static: ['new', 'reviewing', 'fixed', 'rejected'] },
+      },
+      {
+        key: 'targetType',
+        label: 'Type',
+        options: {
+          static: [
+            { value: 'doctor', label: 'Doctor' },
+            { value: 'facility', label: 'Hospital / clinic' },
+            { value: 'lab', label: 'Lab' },
+          ],
+        },
+      },
       { key: 'city', label: 'City', options: { meta: 'cities' } },
     ],
     sections: [
@@ -892,12 +1465,23 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'targetName', label: 'Profile', type: 'text', readonly: true },
           { key: 'targetType', label: 'Type', type: 'text', readonly: true },
-          { key: 'targetSlug', label: 'Profile slug', type: 'text', readonly: true, hint: 'Open the matching section (Doctors, Hospitals & clinics, Labs) and search this slug to fix it.' },
+          {
+            key: 'targetSlug',
+            label: 'Profile slug',
+            type: 'text',
+            readonly: true,
+            hint: 'Open the matching section (Doctors, Hospitals & clinics, Labs) and search this slug to fix it.',
+          },
           { key: 'issues', label: 'What’s wrong', type: 'tags', readonly: true, wide: true },
           { key: 'details', label: 'Details', type: 'textarea', readonly: true, wide: true },
           { key: 'contact', label: 'Reporter contact', type: 'text', readonly: true },
           { key: 'page', label: 'Page', type: 'text', readonly: true },
-          { key: 'status', label: 'Status', type: 'select', options: { static: ['new', 'reviewing', 'fixed', 'rejected'] } },
+          {
+            key: 'status',
+            label: 'Status',
+            type: 'select',
+            options: { static: ['new', 'reviewing', 'fixed', 'rejected'] },
+          },
           { key: 'note', label: 'Team note', type: 'textarea', wide: true },
         ],
       },
@@ -912,7 +1496,8 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'YouTube videos, Shorts, Instagram reels or .mp4 files. Link one to a doctor to show it on their profile; mark it Featured to show it on the homepage.',
+    description:
+      'YouTube videos, Shorts, Instagram reels or .mp4 files. Link one to a doctor to show it on their profile; mark it Featured to show it on the homepage.',
     defaults: { kind: 'reel', published: true, featured: false, order: 10 },
     columns: [
       { key: 'title', label: 'Title' },
@@ -922,8 +1507,27 @@ export const RESOURCES: Resource[] = [
       { key: 'published', label: 'Published', format: 'bool' },
     ],
     filters: [
-      { key: 'kind', label: 'Kind', tabs: true, options: { static: [{ value: 'reel', label: 'Reels' }, { value: 'video', label: 'Videos' }] } },
-      { key: 'published', label: 'Published', options: { static: [{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }] } },
+      {
+        key: 'kind',
+        label: 'Kind',
+        tabs: true,
+        options: {
+          static: [
+            { value: 'reel', label: 'Reels' },
+            { value: 'video', label: 'Videos' },
+          ],
+        },
+      },
+      {
+        key: 'published',
+        label: 'Published',
+        options: {
+          static: [
+            { value: 'true', label: 'Yes' },
+            { value: 'false', label: 'No' },
+          ],
+        },
+      },
     ],
     sections: [
       {
@@ -931,12 +1535,40 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'title', label: 'Title', type: 'text', required: true, wide: true },
           { key: 'slug', label: 'Slug', type: 'text', createOnly: true },
-          { key: 'kind', label: 'Kind', type: 'select', options: { static: [{ value: 'reel', label: 'Reel (vertical)' }, { value: 'video', label: 'Video (landscape)' }] } },
-          { key: 'url', label: 'Link', type: 'url', required: true, wide: true, placeholder: 'https://www.youtube.com/shorts/… or https://www.instagram.com/reel/…', hint: 'YouTube, YouTube Shorts, Instagram reel, or a direct .mp4 link.' },
+          {
+            key: 'kind',
+            label: 'Kind',
+            type: 'select',
+            options: {
+              static: [
+                { value: 'reel', label: 'Reel (vertical)' },
+                { value: 'video', label: 'Video (landscape)' },
+              ],
+            },
+          },
+          {
+            key: 'url',
+            label: 'Link',
+            type: 'url',
+            required: true,
+            wide: true,
+            placeholder: 'https://www.youtube.com/shorts/… or https://www.instagram.com/reel/…',
+            hint: 'YouTube, YouTube Shorts, Instagram reel, or a direct .mp4 link.',
+          },
           { key: 'thumbnailUrl', label: 'Thumbnail image URL (optional)', type: 'url', wide: true },
           { key: 'description', label: 'Description', type: 'textarea', wide: true },
-          { key: 'doctorSlug', label: 'Doctor slug (shows on their profile)', type: 'text', placeholder: 'dr-priya-sharma' },
-          { key: 'specialty', label: 'Specialty', type: 'select', options: { meta: 'specialties' } },
+          {
+            key: 'doctorSlug',
+            label: 'Doctor slug (shows on their profile)',
+            type: 'text',
+            placeholder: 'dr-priya-sharma',
+          },
+          {
+            key: 'specialty',
+            label: 'Specialty',
+            type: 'select',
+            options: { meta: 'specialties' },
+          },
           { key: 'city', label: 'City', type: 'select', options: { meta: 'cities' } },
           { key: 'featured', label: 'Show on homepage', type: 'boolean' },
           { key: 'published', label: 'Published', type: 'boolean' },
@@ -966,17 +1598,54 @@ export const RESOURCES: Resource[] = [
     ],
     filters: [
       { key: 'group', label: 'Group', options: { meta: 'settingGroups' } },
-      { key: 'kind', label: 'Kind', options: { static: [{ value: 'claim', label: 'Claim — must be true' }, 'text', 'number', 'url', 'image'] } },
+      {
+        key: 'kind',
+        label: 'Kind',
+        options: {
+          static: [
+            { value: 'claim', label: 'Claim — must be true' },
+            'text',
+            'number',
+            'url',
+            'image',
+          ],
+        },
+      },
     ],
     sections: [
       {
         title: 'Setting',
         fields: [
           { key: 'label', label: 'Name', type: 'text', required: true },
-          { key: 'slug', label: 'Key', type: 'text', createOnly: true, hint: 'The website reads settings by this key, e.g. claim-patients. It can’t change later.' },
-          { key: 'kind', label: 'Kind', type: 'select', options: { static: [{ value: 'claim', label: 'Claim — must be true' }, { value: 'text', label: 'Text' }, { value: 'number', label: 'Number' }, { value: 'url', label: 'Link' }, { value: 'image', label: 'Image URL' }] } },
+          {
+            key: 'slug',
+            label: 'Key',
+            type: 'text',
+            createOnly: true,
+            hint: 'The website reads settings by this key, e.g. claim-patients. It can’t change later.',
+          },
+          {
+            key: 'kind',
+            label: 'Kind',
+            type: 'select',
+            options: {
+              static: [
+                { value: 'claim', label: 'Claim — must be true' },
+                { value: 'text', label: 'Text' },
+                { value: 'number', label: 'Number' },
+                { value: 'url', label: 'Link' },
+                { value: 'image', label: 'Image URL' },
+              ],
+            },
+          },
           { key: 'group', label: 'Group', type: 'lookup', options: { meta: 'settingGroups' } },
-          { key: 'value', label: 'Value', type: 'textarea', wide: true, hint: 'Claims must be true. Images: a full https:// URL, or a path on the website such as /images/home-hero.jpg.' },
+          {
+            key: 'value',
+            label: 'Value',
+            type: 'textarea',
+            wide: true,
+            hint: 'Claims must be true. Images: a full https:// URL, or a path on the website such as /images/home-hero.jpg.',
+          },
           { key: 'note', label: 'Where it shows', type: 'textarea', wide: true },
         ],
       },
@@ -993,7 +1662,12 @@ export const RESOURCES: Resource[] = [
     canDelete: true,
     description:
       'Editable sections of website pages: FAQs, feature bands, service cards, partner programmes, trust badges, lab and pharmacy shortcuts, and legal pages. Headings levels are fixed by the page design (for SEO); edit the words here. In copy, {labTests}, {cities} and {accreditedFacilities} are filled in with live counts, and {city} in a link is the visitor’s city. Deleting a built-in section restores its original copy on the next deploy.',
-    sitePath: (d) => (['home', 'shared'].includes(d['page']) ? '/' : d['page'] === 'catalogue' ? '/bangalore/surgeries' : `/${d['page']}`),
+    sitePath: (d) =>
+      ['home', 'shared'].includes(d['page'])
+        ? '/'
+        : d['page'] === 'catalogue'
+          ? '/bangalore/surgeries'
+          : `/${d['page']}`,
     defaults: { published: true, order: 50, items: [] },
     columns: [
       { key: 'label', label: 'Section' },
@@ -1012,8 +1686,21 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'label', label: 'Name', type: 'text', required: true },
           { key: 'slug', label: 'Key', type: 'text', createOnly: true },
-          { key: 'page', label: 'Page', type: 'lookup', required: true, options: { meta: 'contentPages' }, hint: 'home, shared (homepage + Partner With Us), curxx-plus, for-providers, lab-tests, medicines, privacy, terms, teleconsultation-policy' },
-          { key: 'section', label: 'Section key', type: 'text', required: true, hint: 'The page reads this section by page + key; only change it for new sections.' },
+          {
+            key: 'page',
+            label: 'Page',
+            type: 'lookup',
+            required: true,
+            options: { meta: 'contentPages' },
+            hint: 'home, shared (homepage + Partner With Us), curxx-plus, for-providers, lab-tests, medicines, privacy, terms, teleconsultation-policy',
+          },
+          {
+            key: 'section',
+            label: 'Section key',
+            type: 'text',
+            required: true,
+            hint: 'The page reads this section by page + key; only change it for new sections.',
+          },
           { key: 'title', label: 'Heading', type: 'text', wide: true },
           { key: 'intro', label: 'Intro', type: 'textarea', wide: true },
           { key: 'published', label: 'Published', type: 'boolean' },
@@ -1038,7 +1725,8 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Patient stories on the homepage and doctor stories on For Providers. Publish only real, consented quotes.',
+    description:
+      'Patient stories on the homepage and doctor stories on For Providers. Publish only real, consented quotes.',
     sitePath: (d) => (d['audience'] === 'provider' ? '/for-providers#testimonials' : '/'),
     defaults: { audience: 'patient', rating: 5, published: true, order: 50 },
     columns: [
@@ -1052,7 +1740,16 @@ export const RESOURCES: Resource[] = [
     ],
     filters: [
       SAMPLE_FILTER,
-      { key: 'audience', label: 'Shown to', options: { static: [{ value: 'patient', label: 'Patients (homepage)' }, { value: 'provider', label: 'Doctors (For Providers)' }] } },
+      {
+        key: 'audience',
+        label: 'Shown to',
+        options: {
+          static: [
+            { value: 'patient', label: 'Patients (homepage)' },
+            { value: 'provider', label: 'Doctors (For Providers)' },
+          ],
+        },
+      },
       { key: 'published', label: 'Published', options: YES_NO },
     ],
     sections: [
@@ -1060,15 +1757,51 @@ export const RESOURCES: Resource[] = [
         title: 'Testimonial',
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Priya Sharma' },
-          { key: 'slug', label: 'Key', type: 'text', createOnly: true, hint: 'Leave blank to generate from the name.' },
-          { key: 'audience', label: 'Shown to', type: 'select', options: { static: [{ value: 'patient', label: 'Patients (homepage)' }, { value: 'provider', label: 'Doctors (For Providers)' }] } },
-          { key: 'initials', label: 'Initials', type: 'text', hint: 'Leave blank to use the name’s initials.' },
-          { key: 'location', label: 'Line under the name', type: 'text', placeholder: 'Bengaluru, Karnataka · or · MD Dermatology • Bengaluru' },
+          {
+            key: 'slug',
+            label: 'Key',
+            type: 'text',
+            createOnly: true,
+            hint: 'Leave blank to generate from the name.',
+          },
+          {
+            key: 'audience',
+            label: 'Shown to',
+            type: 'select',
+            options: {
+              static: [
+                { value: 'patient', label: 'Patients (homepage)' },
+                { value: 'provider', label: 'Doctors (For Providers)' },
+              ],
+            },
+          },
+          {
+            key: 'initials',
+            label: 'Initials',
+            type: 'text',
+            hint: 'Leave blank to use the name’s initials.',
+          },
+          {
+            key: 'location',
+            label: 'Line under the name',
+            type: 'text',
+            placeholder: 'Bengaluru, Karnataka · or · MD Dermatology • Bengaluru',
+          },
           { key: 'city', label: 'City', type: 'select', options: CITY },
           { key: 'rating', label: 'Stars', type: 'select', options: { static: ['5', '4', '3'] } },
           { key: 'doctorSlug', label: 'Doctor (slug, optional)', type: 'text' },
-          { key: 'badge.label', label: 'Result chip (doctors)', type: 'text', placeholder: '3.4x Booking Growth' },
-          { key: 'badge.icon', label: 'Result chip icon', type: 'text', placeholder: 'trending_up' },
+          {
+            key: 'badge.label',
+            label: 'Result chip (doctors)',
+            type: 'text',
+            placeholder: '3.4x Booking Growth',
+          },
+          {
+            key: 'badge.icon',
+            label: 'Result chip icon',
+            type: 'text',
+            placeholder: 'trending_up',
+          },
           { key: 'order', label: 'Order', type: 'number' },
           { key: 'published', label: 'Published', type: 'boolean' },
           { key: 'text', label: 'Quote', type: 'textarea', required: true, wide: true },
@@ -1086,9 +1819,19 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Curxx Plus plans (for patients) and the software plans on For Providers. Prices show on the website straight away.',
-    sitePath: (d) => (d['audience'] === 'provider' ? '/for-providers#pricing' : '/curxx-plus#plans'),
-    defaults: { audience: 'plus', period: 'year', published: true, highlight: false, order: 50, perks: [], excluded: [] },
+    description:
+      'Curxx Plus plans (for patients) and the software plans on For Providers. Prices show on the website straight away.',
+    sitePath: (d) =>
+      d['audience'] === 'provider' ? '/for-providers#pricing' : '/curxx-plus#plans',
+    defaults: {
+      audience: 'plus',
+      period: 'year',
+      published: true,
+      highlight: false,
+      order: 50,
+      perks: [],
+      excluded: [],
+    },
     columns: [
       { key: 'name', label: 'Plan' },
       { key: 'audience', label: 'Page', format: 'badge' },
@@ -1098,7 +1841,16 @@ export const RESOURCES: Resource[] = [
       { key: 'published', label: 'Published', format: 'bool' },
     ],
     filters: [
-      { key: 'audience', label: 'Page', options: { static: [{ value: 'plus', label: 'Curxx Plus' }, { value: 'provider', label: 'For Providers' }] } },
+      {
+        key: 'audience',
+        label: 'Page',
+        options: {
+          static: [
+            { value: 'plus', label: 'Curxx Plus' },
+            { value: 'provider', label: 'For Providers' },
+          ],
+        },
+      },
       { key: 'published', label: 'Published', options: YES_NO },
     ],
     sections: [
@@ -1107,9 +1859,24 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true },
           { key: 'slug', label: 'Key', type: 'text', createOnly: true },
-          { key: 'audience', label: 'Page', type: 'select', options: { static: [{ value: 'plus', label: 'Curxx Plus' }, { value: 'provider', label: 'For Providers' }] } },
+          {
+            key: 'audience',
+            label: 'Page',
+            type: 'select',
+            options: {
+              static: [
+                { value: 'plus', label: 'Curxx Plus' },
+                { value: 'provider', label: 'For Providers' },
+              ],
+            },
+          },
           { key: 'price', label: 'Price (₹)', type: 'number', required: true },
-          { key: 'period', label: 'Per', type: 'select', options: { static: ['year', 'month', 'forever'] } },
+          {
+            key: 'period',
+            label: 'Per',
+            type: 'select',
+            options: { static: ['year', 'month', 'forever'] },
+          },
           { key: 'members', label: 'Members line', type: 'text', placeholder: 'Up to 4 members' },
           { key: 'tagline', label: 'Tagline', type: 'text', wide: true },
           { key: 'highlight', label: 'Highlight this plan', type: 'boolean' },
@@ -1117,7 +1884,13 @@ export const RESOURCES: Resource[] = [
           { key: 'ctaLabel', label: 'Button label', type: 'text' },
           { key: 'order', label: 'Order', type: 'number' },
           { key: 'published', label: 'Published', type: 'boolean' },
-          { key: 'perks', label: 'Included (one per line)', type: 'list', wide: true, hint: 'Wrap words in **double stars** to show them in bold.' },
+          {
+            key: 'perks',
+            label: 'Included (one per line)',
+            type: 'list',
+            wide: true,
+            hint: 'Wrap words in **double stars** to show them in bold.',
+          },
           { key: 'excluded', label: 'Not included (one per line)', type: 'list', wide: true },
         ],
       },
@@ -1137,7 +1910,14 @@ export const RESOURCES: Resource[] = [
     description:
       'Cities we serve, with their localities. Each city gets /<city>/doctors, specialty, locality, clinic, lab and surgery pages; a new one works on the website within about 5 minutes. The slug and locality slugs are public URLs — they can’t change once live.',
     sitePath: (d) => `/${d['slug']}/doctors`,
-    defaults: { tier: 2, popularOrder: 0, order: 100, aliases: [], pincodePrefixes: [], localities: [] },
+    defaults: {
+      tier: 2,
+      popularOrder: 0,
+      order: 100,
+      aliases: [],
+      pincodePrefixes: [],
+      localities: [],
+    },
     columns: [
       { key: 'name', label: 'City' },
       { key: 'state', label: 'State' },
@@ -1151,17 +1931,54 @@ export const RESOURCES: Resource[] = [
         title: 'City',
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Bengaluru' },
-          { key: 'slug', label: 'URL slug', type: 'text', createOnly: true, hint: 'Becomes /<slug>/doctors. Leave blank to generate from the name.' },
+          {
+            key: 'slug',
+            label: 'URL slug',
+            type: 'text',
+            createOnly: true,
+            hint: 'Becomes /<slug>/doctors. Leave blank to generate from the name.',
+          },
           { key: 'state', label: 'State', type: 'text', required: true },
           { key: 'council', label: 'State medical council', type: 'text', placeholder: 'KMC' },
-          { key: 'tier', label: 'Tier', type: 'select', options: { static: [{ value: '1', label: 'Tier 1 (metro)' }, { value: '2', label: 'Tier 2 — surgery costs shown ~15% lower' }] } },
-          { key: 'popularOrder', label: 'Popular city position', type: 'number', hint: '1, 2, 3… lists it first in the city picker and footer. 0 = alphabetical after them.' },
+          {
+            key: 'tier',
+            label: 'Tier',
+            type: 'select',
+            options: {
+              static: [
+                { value: '1', label: 'Tier 1 (metro)' },
+                { value: '2', label: 'Tier 2 — surgery costs shown ~15% lower' },
+              ],
+            },
+          },
+          {
+            key: 'popularOrder',
+            label: 'Popular city position',
+            type: 'number',
+            hint: '1, 2, 3… lists it first in the city picker and footer. 0 = alphabetical after them.',
+          },
           { key: 'lat', label: 'Latitude (centre)', type: 'number', required: true },
           { key: 'lng', label: 'Longitude (centre)', type: 'number', required: true },
-          { key: 'aliases', label: 'Other spellings (redirect here)', type: 'tags', placeholder: 'bengaluru, blr' },
-          { key: 'pincodePrefixes', label: 'Pincode prefixes', type: 'tags', placeholder: '560, 561' },
+          {
+            key: 'aliases',
+            label: 'Other spellings (redirect here)',
+            type: 'tags',
+            placeholder: 'bengaluru, blr',
+          },
+          {
+            key: 'pincodePrefixes',
+            label: 'Pincode prefixes',
+            type: 'tags',
+            placeholder: '560, 561',
+          },
           { key: 'order', label: 'Order', type: 'number' },
-          { key: 'localities', label: 'Localities', type: 'json', wide: true, hint: '[{"name":"Indiranagar","pincode":"560038","lat":12.97,"lng":77.64}] — slugs are made from names; keep existing ones unchanged.' },
+          {
+            key: 'localities',
+            label: 'Localities',
+            type: 'json',
+            wide: true,
+            hint: '[{"name":"Indiranagar","pincode":"560038","lat":12.97,"lng":77.64}] — slugs are made from names; keep existing ones unchanged.',
+          },
         ],
       },
     ],
@@ -1175,7 +1992,8 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Conditions with their own treatment page in every city (/<city>/treatment-for-<slug>) and search suggestions. A chip label + position puts one in the homepage “Popular Consultations”.',
+    description:
+      'Conditions with their own treatment page in every city (/<city>/treatment-for-<slug>) and search suggestions. A chip label + position puts one in the homepage “Popular Consultations”.',
     sitePath: (d) => `/bangalore/treatment-for-${d['slug']}`,
     defaults: { popularOrder: 0, order: 100 },
     columns: [
@@ -1191,11 +2009,33 @@ export const RESOURCES: Resource[] = [
         title: 'Condition',
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true },
-          { key: 'slug', label: 'URL slug', type: 'text', createOnly: true, hint: 'Becomes /<city>/treatment-for-<slug>. Can’t change later.' },
-          { key: 'specialty', label: 'Treated by', type: 'select', required: true, options: { meta: 'specialties' } },
-          { key: 'focus', label: 'Focus area slug', type: 'text', hint: 'One of the specialty’s focus areas, e.g. acne-scars' },
+          {
+            key: 'slug',
+            label: 'URL slug',
+            type: 'text',
+            createOnly: true,
+            hint: 'Becomes /<city>/treatment-for-<slug>. Can’t change later.',
+          },
+          {
+            key: 'specialty',
+            label: 'Treated by',
+            type: 'select',
+            required: true,
+            options: { meta: 'specialties' },
+          },
+          {
+            key: 'focus',
+            label: 'Focus area slug',
+            type: 'text',
+            hint: 'One of the specialty’s focus areas, e.g. acne-scars',
+          },
           { key: 'popular', label: 'Homepage chip label', type: 'text', placeholder: 'Skin Acne' },
-          { key: 'popularOrder', label: 'Chip position', type: 'number', hint: '1, 2, 3… shows it as a homepage chip. 0 = not shown.' },
+          {
+            key: 'popularOrder',
+            label: 'Chip position',
+            type: 'number',
+            hint: '1, 2, 3… shows it as a homepage chip. 0 = not shown.',
+          },
           { key: 'order', label: 'Order', type: 'number' },
           { key: 'summary', label: 'Summary', type: 'textarea', wide: true },
           { key: 'symptoms', label: 'Symptoms', type: 'list', wide: true },
@@ -1216,9 +2056,17 @@ export const RESOURCES: Resource[] = [
     key: 'slug',
     canCreate: true,
     canDelete: true,
-    description: 'Planned surgeries with a page in every city (/<city>/surgery/<slug>): cost range (tier-1 city; tier-2 shown ~15% lower), stay, recovery and the hospitals that do them.',
+    description:
+      'Planned surgeries with a page in every city (/<city>/surgery/<slug>): cost range (tier-1 city; tier-2 shown ~15% lower), stay, recovery and the hospitals that do them.',
     sitePath: (d) => `/bangalore/surgery/${d['slug']}`,
-    defaults: { icon: 'healing', popular: false, insurance: true, order: 100, durationMinutes: [30, 60], cost: [30000, 60000] },
+    defaults: {
+      icon: 'healing',
+      popular: false,
+      insurance: true,
+      order: 100,
+      durationMinutes: [30, 60],
+      cost: [30000, 60000],
+    },
     columns: [
       { key: 'name', label: 'Surgery' },
       { key: 'category', label: 'Category', format: 'badge' },
@@ -1236,15 +2084,44 @@ export const RESOURCES: Resource[] = [
         title: 'Surgery',
         fields: [
           { key: 'name', label: 'Name', type: 'text', required: true },
-          { key: 'slug', label: 'URL slug', type: 'text', createOnly: true, hint: 'Becomes /<city>/surgery/<slug>. Can’t change later.' },
-          { key: 'category', label: 'Category', type: 'lookup', required: true, options: { meta: 'surgeryCategories' }, hint: 'Pick one, or type a new category (order categories in Page content → catalogue).' },
-          { key: 'specialty', label: 'Surgeon specialty', type: 'select', required: true, options: { meta: 'specialties' } },
+          {
+            key: 'slug',
+            label: 'URL slug',
+            type: 'text',
+            createOnly: true,
+            hint: 'Becomes /<city>/surgery/<slug>. Can’t change later.',
+          },
+          {
+            key: 'category',
+            label: 'Category',
+            type: 'lookup',
+            required: true,
+            options: { meta: 'surgeryCategories' },
+            hint: 'Pick one, or type a new category (order categories in Page content → catalogue).',
+          },
+          {
+            key: 'specialty',
+            label: 'Surgeon specialty',
+            type: 'select',
+            required: true,
+            options: { meta: 'specialties' },
+          },
           { key: 'icon', label: 'Icon', type: 'text' },
           { key: 'popular', label: 'Popular', type: 'boolean' },
           { key: 'insurance', label: 'Usually covered by insurance', type: 'boolean' },
           { key: 'order', label: 'Order', type: 'number' },
-          { key: 'cost', label: 'Cost range, tier-1 city (₹)', type: 'json', hint: '[35000, 75000]' },
-          { key: 'durationMinutes', label: 'Procedure time (minutes)', type: 'json', hint: '[20, 40]' },
+          {
+            key: 'cost',
+            label: 'Cost range, tier-1 city (₹)',
+            type: 'json',
+            hint: '[35000, 75000]',
+          },
+          {
+            key: 'durationMinutes',
+            label: 'Procedure time (minutes)',
+            type: 'json',
+            hint: '[20, 40]',
+          },
           { key: 'stay', label: 'Hospital stay', type: 'text', placeholder: 'Day care' },
           { key: 'recovery', label: 'Recovery', type: 'text' },
           { key: 'anaesthesia', label: 'Anaesthesia', type: 'text', wide: true },
@@ -1254,7 +2131,12 @@ export const RESOURCES: Resource[] = [
           { key: 'steps', label: 'Steps', type: 'list', wide: true },
           { key: 'benefits', label: 'Benefits', type: 'list', wide: true },
           { key: 'risks', label: 'Risks', type: 'list', wide: true },
-          { key: 'departments', label: 'Hospital departments that do it', type: 'tags', wide: true },
+          {
+            key: 'departments',
+            label: 'Hospital departments that do it',
+            type: 'tags',
+            wide: true,
+          },
         ],
       },
     ],
@@ -1265,9 +2147,13 @@ export const RESOURCE_BY_NAME = new Map(RESOURCES.map((r) => [r.name, r]));
 export const GROUPS = [...new Set(RESOURCES.map((r) => r.group))];
 
 /** Options for a select/filter, resolved against the meta payload. */
-export function optionsFor(source: OptionSource | undefined, meta: Meta | null): { value: string; label: string }[] {
+export function optionsFor(
+  source: OptionSource | undefined,
+  meta: Meta | null,
+): { value: string; label: string }[] {
   if (!source) return [];
-  if ('static' in source) return source.static.map((o) => (typeof o === 'string' ? { value: o, label: o } : o));
+  if ('static' in source)
+    return source.static.map((o) => (typeof o === 'string' ? { value: o, label: o } : o));
   if (!meta) return [];
   switch (source.meta) {
     case 'cities':
@@ -1275,7 +2161,10 @@ export function optionsFor(source: OptionSource | undefined, meta: Meta | null):
     case 'specialties':
       return meta.specialties.map((s) => ({ value: s.slug, label: s.name }));
     case 'facilities':
-      return meta.facilities.map((f) => ({ value: f.slug, label: `${f.name} — ${f.area}, ${f.city}` }));
+      return meta.facilities.map((f) => ({
+        value: f.slug,
+        label: `${f.name} — ${f.area}, ${f.city}`,
+      }));
     case 'facilityTypes':
       return meta.facilityTypes.map((t) => ({ value: t.name, label: t.name }));
     case 'labCategories':

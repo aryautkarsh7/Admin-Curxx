@@ -22,15 +22,31 @@ import { Column, RESOURCE_BY_NAME, Resource, getPath, optionsFor } from '../core
             <p class="muted">{{ r.description }}</p>
           </div>
           @if (r.canCreate) {
-            <a class="btn primary" [routerLink]="['/', r.name, 'new']"><span class="icon">add</span>Add {{ r.singular }}</a>
+            <a class="btn primary" [routerLink]="['/', r.name, 'new']"
+              ><span class="icon">add</span>Add {{ r.singular }}</a
+            >
           }
         </div>
 
         @for (f of tabFilters(r); track f.key) {
           <nav class="tabs" [attr.aria-label]="f.label">
-            <button type="button" class="tab" [class.active]="!filterValue(f.key)" (click)="setFilter(f.key, '')">All</button>
+            <button
+              type="button"
+              class="tab"
+              [class.active]="!filterValue(f.key)"
+              (click)="setFilter(f.key, '')"
+            >
+              All
+            </button>
             @for (o of options(f.options); track o.value) {
-              <button type="button" class="tab" [class.active]="filterValue(f.key) === o.value" (click)="setFilter(f.key, o.value)">{{ o.label }}</button>
+              <button
+                type="button"
+                class="tab"
+                [class.active]="filterValue(f.key) === o.value"
+                (click)="setFilter(f.key, o.value)"
+              >
+                {{ o.label }}
+              </button>
             }
           </nav>
         }
@@ -41,7 +57,12 @@ import { Column, RESOURCE_BY_NAME, Resource, getPath, optionsFor } from '../core
             <input name="q" [(ngModel)]="q" [placeholder]="'Search ' + r.label.toLowerCase()" />
           </label>
           @for (f of selectFilters(r); track f.key) {
-            <select [name]="f.key" [ngModel]="filterValue(f.key)" (ngModelChange)="setFilter(f.key, $event)" [attr.aria-label]="f.label">
+            <select
+              [name]="f.key"
+              [ngModel]="filterValue(f.key)"
+              (ngModelChange)="setFilter(f.key, $event)"
+              [attr.aria-label]="f.label"
+            >
               <option value="">{{ f.label }}: all</option>
               @for (o of options(f.options); track o.value) {
                 <option [value]="o.value">{{ o.label }}</option>
@@ -88,17 +109,28 @@ import { Column, RESOURCE_BY_NAME, Resource, getPath, optionsFor } from '../core
                     }
                     <td class="right nowrap" (click)="$event.stopPropagation()">
                       @if (r.sitePath) {
-                        <a class="btn ghost small" [href]="siteUrl + r.sitePath(doc)" target="_blank" rel="noopener" title="View on website"><span class="icon">open_in_new</span></a>
+                        <a
+                          class="btn ghost small"
+                          [href]="siteUrl + r.sitePath(doc)"
+                          target="_blank"
+                          rel="noopener"
+                          title="View on website"
+                          ><span class="icon">open_in_new</span></a
+                        >
                       }
                       <a class="btn ghost small" [routerLink]="['/', r.name, keyOf(doc)]">Edit</a>
                       @if (r.canDelete) {
-                        <button class="btn ghost small danger" type="button" (click)="remove(doc)">Delete</button>
+                        <button class="btn ghost small danger" type="button" (click)="remove(doc)">
+                          Delete
+                        </button>
                       }
                     </td>
                   </tr>
                 } @empty {
                   <tr>
-                    <td [attr.colspan]="r.columns.length + 1" class="muted empty">{{ loading() ? 'Loading…' : 'Nothing matches.' }}</td>
+                    <td [attr.colspan]="r.columns.length + 1" class="muted empty">
+                      {{ loading() ? 'Loading…' : 'Nothing matches.' }}
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -108,10 +140,28 @@ import { Column, RESOURCE_BY_NAME, Resource, getPath, optionsFor } from '../core
 
         @if (page(); as p) {
           <div class="pager">
-            <span class="muted small">{{ p.total.toLocaleString('en-IN') }} {{ p.total === 1 ? r.singular : r.label.toLowerCase() }} · page {{ p.page }} of {{ p.pages }}</span>
+            <span class="muted small"
+              >{{ p.total.toLocaleString('en-IN') }}
+              {{ p.total === 1 ? r.singular : r.label.toLowerCase() }} · page {{ p.page }} of
+              {{ p.pages }}</span
+            >
             <div>
-              <button class="btn small" type="button" [disabled]="p.page <= 1" (click)="goTo(p.page - 1)">Previous</button>
-              <button class="btn small" type="button" [disabled]="p.page >= p.pages" (click)="goTo(p.page + 1)">Next</button>
+              <button
+                class="btn small"
+                type="button"
+                [disabled]="p.page <= 1"
+                (click)="goTo(p.page - 1)"
+              >
+                Previous
+              </button>
+              <button
+                class="btn small"
+                type="button"
+                [disabled]="p.page >= p.pages"
+                (click)="goTo(p.page + 1)"
+              >
+                Next
+              </button>
             </div>
           </div>
         }
@@ -136,7 +186,10 @@ export class ResourceListPage {
   protected q = '';
 
   constructor() {
-    this.api.meta().then((m) => this.meta.set(m)).catch(() => {});
+    this.api
+      .meta()
+      .then((m) => this.meta.set(m))
+      .catch(() => {});
     combineLatest([this.route.paramMap, this.route.queryParamMap])
       .pipe(takeUntilDestroyed())
       .subscribe(([params, query]) => {
@@ -173,7 +226,11 @@ export class ResourceListPage {
   protected keyOf = (doc: Doc) => (this.resource()!.key === 'slug' ? doc['slug'] : doc['id']);
 
   private navigate(patch: Record<string, string | null>) {
-    void this.router.navigate([], { relativeTo: this.route, queryParams: { ...patch, page: patch['page'] ?? null }, queryParamsHandling: 'merge' });
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { ...patch, page: patch['page'] ?? null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected search() {

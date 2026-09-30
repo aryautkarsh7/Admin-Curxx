@@ -32,9 +32,9 @@ npm start
 
 There is one admin account, configured on the API server with two environment variables:
 
-| Variable | Example |
-| --- | --- |
-| `ADMIN_EMAIL` | `ops@curxx.in` |
+| Variable         | Example                                 |
+| ---------------- | --------------------------------------- |
+| `ADMIN_EMAIL`    | `ops@curxx.in`                          |
 | `ADMIN_PASSWORD` | a long random password (10+ characters) |
 
 Without them, admin sign-in is disabled (the API answers 503). Sessions last 12 hours.
@@ -44,10 +44,10 @@ Without them, admin sign-in is disabled (the API answers 503). Sessions last 12 
 - Changes are written straight to MongoDB through `/api/v1/admin/*`, so the site shows them
   within a few minutes (public pages are cached briefly).
 - Records created or edited here are flagged `managed`. The catalogue sync that runs on every
-  backend deploy never overwrites or deletes managed records. Deleting a *seed* record here removes it
+  backend deploy never overwrites or deletes managed records. Deleting a _seed_ record here removes it
   until the next catalogue data update re-seeds it.
 - Surgeries, conditions and cities are defined in `backend/src/db/data` because they drive public
-  URLs; they are listed read-only under *Surgeries & conditions*.
+  URLs; they are listed read-only under _Surgeries & conditions_.
 
 ## Deploy
 

@@ -11,7 +11,8 @@ const LIVE_SITE = 'https://curxx-frontend.vercel.app';
 /** Staging backend (Railway "staging" environment → curxx-dev), e.g. https://crux-backend-staging.up.railway.app/api/v1. */
 const STAGING_API = '';
 /** Staging website (the frontend's doctar-import preview). */
-const STAGING_SITE = 'https://curxx-frontend-git-doctar-import-aaradhyaarya313-7090s-projects.vercel.app';
+const STAGING_SITE =
+  'https://curxx-frontend-git-doctar-import-aaradhyaarya313-7090s-projects.vercel.app';
 
 const live = typeof location === 'undefined' || location.hostname === LIVE_ADMIN_HOST;
 

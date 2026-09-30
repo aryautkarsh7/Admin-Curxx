@@ -1,9 +1,5 @@
+node_modules/
 dist/
 .angular/
-# Existing source and project metadata are the formatting baseline.
-README.md
-angular.json
-src/
-tsconfig.app.json
-tsconfig.spec.json
-vercel.json
+coverage/
+package-lock.json

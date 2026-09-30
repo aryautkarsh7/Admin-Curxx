@@ -22,9 +22,17 @@ import { Auth } from '../core/auth';
         </label>
         <label class="field">
           <span>Password</span>
-          <input name="password" type="password" autocomplete="current-password" required [(ngModel)]="password" />
+          <input
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            [(ngModel)]="password"
+          />
         </label>
-        <button class="btn primary block" type="submit" [disabled]="busy() || !email || !password">{{ busy() ? 'Signing in…' : 'Sign in' }}</button>
+        <button class="btn primary block" type="submit" [disabled]="busy() || !email || !password">
+          {{ busy() ? 'Signing in…' : 'Sign in' }}
+        </button>
       </form>
     </main>
   `,
@@ -46,7 +54,9 @@ export class LoginPage {
       const { token, admin } = await this.api.login(this.email.trim(), this.password);
       this.auth.signIn(token, admin.email);
       const next = this.route.snapshot.queryParamMap.get('next');
-      await this.router.navigateByUrl(next && next.startsWith('/') && !next.startsWith('//') ? next : '/');
+      await this.router.navigateByUrl(
+        next && next.startsWith('/') && !next.startsWith('//') ? next : '/',
+      );
     } catch (e) {
       this.error.set(errorText(e));
     } finally {
