@@ -1017,6 +1017,69 @@ export const RESOURCES: Resource[] = [
 
   // ---------------------------------------------------------------- Operations
   {
+    name: 'appointment-requests',
+    label: 'Appointment requests',
+    singular: 'appointment request',
+    icon: 'event_note',
+    group: 'Operations',
+    key: 'id',
+    canCreate: false,
+    canDelete: true,
+    description:
+      'Requests from the "Request an appointment" form on doctors who can’t be booked online. Call the patient, confirm with the clinic, then set the status. Doctors and hospitals are never contacted automatically.',
+    columns: [
+      { key: 'reference', label: 'Reference' },
+      { key: 'patient.name', label: 'Patient' },
+      { key: 'patient.phone', label: 'Phone' },
+      { key: 'doctorName', label: 'Doctor' },
+      { key: 'facilityName', label: 'Place' },
+      { key: 'preferredDay', label: 'Preferred day' },
+      { key: 'preferredTime', label: 'Time', format: 'badge' },
+      { key: 'status', label: 'Status', format: 'badge' },
+      { key: 'createdAt', label: 'Received', format: 'datetime' },
+    ],
+    filters: [
+      {
+        key: 'status',
+        label: 'Status',
+        options: { static: ['requested', 'confirmed', 'cancelled'] },
+      },
+    ],
+    sections: [
+      {
+        title: 'Request',
+        fields: [
+          { key: 'reference', label: 'Reference', type: 'text', readonly: true },
+          { key: 'patient.name', label: 'Patient', type: 'text', readonly: true },
+          { key: 'patient.phone', label: 'Phone', type: 'text', readonly: true },
+          { key: 'doctorName', label: 'Doctor', type: 'text', readonly: true },
+          { key: 'doctorSlug', label: 'Doctor page (slug)', type: 'text', readonly: true },
+          { key: 'facilityName', label: 'Place', type: 'text', readonly: true },
+          {
+            key: 'preferredDay',
+            label: 'Preferred day (any if empty)',
+            type: 'text',
+            readonly: true,
+          },
+          { key: 'preferredTime', label: 'Preferred time', type: 'text', readonly: true },
+          {
+            key: 'notify.status',
+            label: 'Notice (test / logged / failed)',
+            type: 'text',
+            readonly: true,
+          },
+          {
+            key: 'status',
+            label: 'Status',
+            type: 'select',
+            options: { static: ['requested', 'confirmed', 'cancelled'] },
+          },
+          { key: 'note', label: 'Team note', type: 'textarea', wide: true },
+        ],
+      },
+    ],
+  },
+  {
     name: 'appointments',
     label: 'Appointments',
     singular: 'appointment',
