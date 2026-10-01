@@ -1179,6 +1179,7 @@ export const RESOURCES: Resource[] = [
       'Surgery consultations, Curxx Plus sign-ups, partner and corporate enquiries, and callback requests.',
     columns: [
       { key: 'kind', label: 'Kind', format: 'badge' },
+      { key: 'role', label: 'Profile type', format: 'badge' },
       { key: 'name', label: 'Name' },
       { key: 'phone', label: 'Phone' },
       { key: 'surgery', label: 'Surgery' },
@@ -1203,6 +1204,11 @@ export const RESOURCES: Resource[] = [
         },
       },
       {
+        key: 'role',
+        label: 'Profile type',
+        options: { static: ['doctor', 'hospital', 'professional', 'diagnostic'] },
+      },
+      {
         key: 'status',
         label: 'Status',
         options: { static: ['new', 'contacted', 'converted', 'closed'] },
@@ -1213,6 +1219,7 @@ export const RESOURCES: Resource[] = [
         title: 'Lead',
         fields: [
           { key: 'kind', label: 'Kind', type: 'text', readonly: true },
+          { key: 'role', label: 'Profile type', type: 'text', readonly: true },
           { key: 'name', label: 'Name', type: 'text', readonly: true },
           { key: 'phone', label: 'Phone', type: 'text', readonly: true },
           { key: 'email', label: 'Email', type: 'text', readonly: true },
