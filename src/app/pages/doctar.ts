@@ -24,6 +24,7 @@ const TABS: { kind: DoctarKind; label: string }[] = [
 const EMPTY: Required<DoctarOverlay> = {
   rank: 0,
   featured: false,
+  registrationVerified: false,
   hidden: false,
   bookable: true,
   phone: '',
@@ -235,6 +236,9 @@ const EMPTY: Required<DoctarOverlay> = {
                     @if (row['overlay']?.featured) {
                       <span class="badge" data-v="new">Featured</span>
                     }
+                    @if (row['overlay']?.registrationVerified) {
+                      <span class="badge" data-v="confirmed">Registration verified</span>
+                    }
                     @if (row['overlay']?.bookable === false) {
                       <span class="badge" data-v="rejected">No online booking</span>
                     }
@@ -283,6 +287,23 @@ const EMPTY: Required<DoctarOverlay> = {
                             /><span>{{ form.featured ? 'Yes' : 'No' }}</span></label
                           >
                         </div>
+                        @if (kind() === 'doctors') {
+                          <div class="field">
+                            <label>Medical registration verified</label
+                            ><label class="switch"
+                              ><input
+                                type="checkbox"
+                                name="registrationVerified"
+                                [(ngModel)]="form.registrationVerified"
+                              /><span>{{
+                                form.registrationVerified ? 'Yes: badge shown on the profile' : 'No'
+                              }}</span></label
+                            ><small class="muted"
+                              >Only after the doctor claimed the profile and the registration was
+                              checked.</small
+                            >
+                          </div>
+                        }
                         <div class="field">
                           <label for="rank">Position (0 = normal order)</label
                           ><input

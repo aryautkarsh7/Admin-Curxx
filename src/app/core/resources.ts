@@ -1220,6 +1220,7 @@ export const RESOURCES: Resource[] = [
         fields: [
           { key: 'kind', label: 'Kind', type: 'text', readonly: true },
           { key: 'role', label: 'Profile type', type: 'text', readonly: true },
+          { key: 'claim', label: 'Claims doctor profile (slug)', type: 'text', readonly: true },
           { key: 'name', label: 'Name', type: 'text', readonly: true },
           { key: 'phone', label: 'Phone', type: 'text', readonly: true },
           { key: 'email', label: 'Email', type: 'text', readonly: true },

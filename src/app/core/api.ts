@@ -85,6 +85,8 @@ export type DoctarStatus = {
 export type DoctarOverlay = {
   rank?: number;
   featured?: boolean;
+  /** Doctors: claimed, and the medical council registration checked by the team. */
+  registrationVerified?: boolean;
   hidden?: boolean;
   bookable?: boolean;
   phone?: string;
